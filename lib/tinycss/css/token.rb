@@ -10,6 +10,7 @@ module TinyCSS
         @kind = kind
         @pos_start = pos_start
         @pos_end = pos_end
+        @literal = opts.delete(:literal)
         @opts = opts.empty? ? nil : opts
       end
 

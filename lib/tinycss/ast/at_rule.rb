@@ -7,10 +7,9 @@ module TinyCSS
 
       def initialize(rule)
         @name = rule.name.literal.gsub(/^@/, "")
-        @prelude = rule.prelude.map(&:literal)
-        @prelude.pop while @prelude.last&.strip&.empty?
-        @prelude.shift while @prelude.first&.strip&.empty?
-        @prelude = @prelude.join
+        @prelude = rule.prelude.map { AST.convert(it) }
+        @prelude.pop while @prelude.last == " "
+        @prelude.shift while @prelude.first == " "
         @child_rules = rule.child_rules.map { AST.convert it }
       end
     end

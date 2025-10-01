@@ -71,10 +71,132 @@ RSpec.describe TinyCSS::CSS::Tokenizer do
     ]
   end
 
-  it "correctly parses broken dashes" do
-    style = "\\-"
+  it "tokenizes escapes 1" do
+    style = "\\- red0 -red --red -\\-red\\ blue 0red -0red \x00red _Red .red r\u00EAd r\\\u00EAd \x7F\u0080\u0081"
     tok = described_class.new(style)
     tok.tokenize
-    expect(tok.tokens.first.opts[:value]).to eq "-"
+    t = tok.tokens
+    expect(t.map(&:literal)).to eq [
+      "-",
+      " ",
+      "red0",
+      " ",
+      "-red",
+      " ",
+      "--red",
+      " ",
+      "--red blue",
+      " ",
+      "0red",
+      " ",
+      "-0red",
+      " ",
+      "\uFFFDred",
+      " ",
+      "_Red",
+      " ",
+      ".",
+      "red",
+      " ",
+      "rêd",
+      " ",
+      "rêd",
+      " ",
+      "\u007F",
+      "\u0080\u0081"
+    ]
+  end
+
+  it "tokenizes escapes 2" do
+    style = "rgba0() -rgba() --rgba() -\\-rgba() 0rgba() -0rgba() _rgba() .rgba() rgbâ() \\30rgba() rgba () @rgba() #rgba()"
+    tok = described_class.new(style)
+    tok.tokenize
+    t = tok.tokens
+    exp = [
+      "rgba0(",
+      ")",
+      " ",
+      "-rgba(",
+      ")",
+      " ",
+      "--rgba(",
+      ")",
+      " ",
+      "--rgba(",
+      ")",
+      " ",
+      "0rgba",
+      "(",
+      ")",
+      " ",
+      "-0rgba",
+      "(",
+      ")",
+      " ",
+      "_rgba(",
+      ")",
+      " ",
+      ".",
+      "rgba(",
+      ")",
+      " ",
+      "rgbâ(",
+      ")",
+      " ",
+      "0rgba(",
+      ")",
+      " ",
+      "rgba",
+      " ",
+      "(",
+      ")",
+      " ",
+      "@rgba",
+      "(",
+      ")",
+      " ",
+      "#rgba",
+      "(",
+      ")"
+    ]
+    expect(t.map(&:literal)).to eq exp
+  end
+
+  it "tokenizes hashes" do
+    style = "#red0 #-Red #--red #-\\-red #0red #-0red #_Red #.red #rêd #êrd #\\.red\\"
+    tok = described_class.new(style)
+    tok.tokenize
+    t = tok.tokens
+    expect(t.map(&:literal)).to eq [
+      "#red0", " ",
+      "#-Red", " ",
+      "#--red", " ",
+      "#--red", " ",
+      "#0red", " ",
+      "#-0red", " ",
+      "#_Red", " ",
+      "#", ".", "red", " ",
+      "#rêd", " ",
+      "#êrd", " ",
+      "#.red\uFFFD"
+    ]
+  end
+
+  it "tokenizes simple numbers" do
+    style = "12 +34 -45 .67 +.89 -.01 2.3 +45.0 -0.67"
+    tok = described_class.new(style)
+    tok.tokenize
+    t = tok.tokens
+    expect(t.map(&:literal)).to eq [
+      "12", " ",
+      "+34", " ",
+      "-45", " ",
+      ".67", " ",
+      "+.89", " ",
+      "-.01", " ",
+      "2.3", " ",
+      "+45.0", " ",
+      "-0.67"
+    ]
   end
 end

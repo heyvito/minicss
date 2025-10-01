@@ -7,7 +7,7 @@ module TinyCSS
 
       def initialize(func)
         @raw_name = func.name.literal
-        @name = raw_name.gsub(/\($/, "")
+        @name = raw_name.strip.gsub(/\($/, "")
         @value = func.value.map { AST.convert(it) }
       end
     end

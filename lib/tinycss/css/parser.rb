@@ -28,27 +28,36 @@ module TinyCSS
 
       def parse_rule
         stream.discard_whitespace
+        return SyntaxError.new("empty") if stream.empty?
         result = if stream.peek.kind == :at_keyword
           consume_at_rule
         else
           consume_qualified_rule
         end
+        return SyntaxError.new("invalid") unless result
         stream.discard_whitespace
-        # If the next token from input is an <EOF-token>, return rule. Otherwise, return a syntax error.
+        return SyntaxError.new("extra-input") unless stream.empty?
         result
       end
 
       def parse_declaration
         stream.discard_whitespace
-        consume_declaration
+        return SyntaxError.new("empty") if stream.empty?
+
+        decl = consume_declaration
+        return SyntaxError.new("invalid") unless decl
+
+        decl
       end
 
       def parse_component_value
         stream.discard_whitespace
-        # If input is empty, return a syntax error.
+        return SyntaxError.new("empty") if stream.empty?
+
         value = consume_component_value
         stream.discard_whitespace
-        # If input is empty, return value. Otherwise, return a syntax error.
+        return SyntaxError.new("extra-input") unless stream.empty?
+
         value
       end
 
@@ -201,7 +210,7 @@ module TinyCSS
             end
 
             stream.restore
-            rule = consume_qualified_rule(nested: true, stop: :semicolon)
+            rule = consume_qualified_rule(nested: true)
             if rule.is_a? InvalidRuleError
               unless decls.empty?
                 rules << decls
@@ -249,10 +258,15 @@ module TinyCSS
         decl.value.pop while decl.value.last&.kind == :whitespace
         decl.original_text = decl.value.map(&:literal).join if decl.name.literal.start_with?("--")
 
-        # TODO: Otherwise, if decl’s value contains a top-level simple block
+        # Otherwise, if decl’s value contains a top-level simple block
         # with an associated token of <{-token>, and also contains any other
         # non-<whitespace-token> value, return nothing. (That is, a top-level
         # {}-block is only allowed as the entire value of a non-custom property.)
+        block = decl.value.find { it.is_a?(AST::SimpleBlock) && it.associated_token == :left_curly }
+        if block
+          invalid = decl.value.any? { it != block && it.kind != :whitespace }
+          return nil if invalid
+        end
 
         decl
       end
@@ -303,7 +317,7 @@ module TinyCSS
       end
 
       def consume_simple_block
-        return unless assert_next_token(:left_curly) || assert_next_token(:left_square_bracket) || assert_next_token(:left_parenthesis)
+        return if !assert_next_token(:left_curly) && !assert_next_token(:left_square_bracket) && !assert_next_token(:left_parenthesis)
 
         block = AST::SimpleBlock.new(associated_token: stream.consume.kind)
         ending_token = case block.associated_token

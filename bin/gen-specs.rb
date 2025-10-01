@@ -51,10 +51,27 @@ class App
         write "it #{name.dump} do"
         inc do
           write "style = #{input.dump}"
-          write "tok = TinyCSS::CSS::Tokenizer.new(style)"
+          write "tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)"
           write "tok.tokenize"
           write "par = TinyCSS::CSS::Parser.new(tok.tokens)"
-          write "sheet = par.parse_stylesheet"
+          case @opts.fetch(:type)
+          when :blocks
+            write "sheet = par.parse_block_contents"
+          when :component_value_list
+            write "sheet = par.parse_component_value_list"
+          when :declarations
+            write "sheet = par.parse_block_contents"
+          when :component_value
+            write "sheet = [par.parse_component_value]"
+          when :declaration
+            write "sheet = [par.parse_declaration]"
+          when :rule
+            write "sheet = [par.parse_rule]"
+          when :rule_list
+            write "sheet = par.parse_stylesheet_contents"
+          when :stylesheet
+            write "sheet = par.parse_stylesheet"
+          end
           write "r = TinyCSS::AST.convert(sheet)"
           write ""
           write "match_ast(r) do"
@@ -63,19 +80,19 @@ class App
             when :blocks
               run_blocks!(exp)
             when :component_value_list
-              write "# #{opts[:type]}"
+              run_blocks!(exp, strip_spaces: false)
             when :declarations
-              write "# #{opts[:type]}"
+              run_blocks!(exp)
             when :component_value
-              write "# #{opts[:type]}"
+              run_single!(exp, strip_spaces: false)
             when :declaration
-              write "# #{opts[:type]}"
+              run_single!(exp, strip_spaces: false)
             when :rule
-              write "# #{opts[:type]}"
+              run_single!(exp, strip_spaces: false)
             when :rule_list
-              write "# #{opts[:type]}"
+              run_blocks!(exp, strip_spaces: false)
             when :stylesheet
-              write "# #{opts[:type]}"
+              run_blocks!(exp, strip_spaces: false)
             end
           end
           write "end"
@@ -87,89 +104,130 @@ class App
     write "end"
   end
 
-  def run_blocks!(exp)
+  def run_single!(exp, strip_spaces: true)
     return if exp.nil?
     return write "empty!" if exp.empty?
 
+    if exp.is_a? String
+      write "string #{exp.inspect}"
+      return
+    end
+
+    if strip_spaces
+      exp.shift while exp.first == " "
+      exp.pop while exp.last == " "
+    end
+
+    case exp.first
+    when "declaration"
+      name, body, important = exp[1...]
+      debugger if important.nil?
+      write "decl(#{name.dump}, important: #{important}) do"
+      inc do
+        run_blocks!(body, strip_spaces:)
+      end
+      write "end"
+    when "{}"
+      write "block(\"{\") do"
+      inc do
+        run_blocks!(exp[1...], strip_spaces:)
+      end
+      write "end"
+    when "[]"
+      write "block(\"[\") do"
+      inc do
+        run_blocks!(exp[1...], strip_spaces:)
+      end
+      write "end"
+    when "()"
+      write "block(\"(\") do"
+      inc do
+        run_blocks!(exp[1...], strip_spaces:)
+      end
+      write "end"
+    when "ident"
+      write "ident #{exp[1].inspect}"
+    when "number"
+      value, type = exp[2...]
+      write "number #{value}, :#{type}"
+    when "string"
+      write "string #{exp[1].inspect}"
+    when "at-rule"
+      name, prelude, block = exp[1...]
+      write "at_rule(#{name.inspect}) do"
+      inc do
+        write "prelude do"
+        inc do
+          run_blocks! prelude, strip_spaces:
+        end
+        write "end"
+      end
+
+      unless body.nil?
+        write "body do"
+        inc do
+          run_blocks! block, strip_spaces:
+        end
+        write "end"
+      end
+      write("end")
+    when "qualified rule"
+      prelude, block = exp[1...]
+      write "q_rule do"
+      inc do
+        write "prelude do"
+        inc do
+          run_blocks! prelude, strip_spaces:
+        end
+        write "end"
+
+        write "body do"
+        inc do
+          run_blocks! block, strip_spaces:
+        end
+        write "end"
+      end
+      write "end"
+    when "dimension"
+      repr, val, type, unit = exp[1...]
+      type = type.to_sym
+      write "dimension(#{val}, #{type.inspect}, #{unit.dump})"
+    when "function"
+      write "function(#{exp[1].dump}) do"
+      inc do
+        run_blocks! exp[2...], strip_spaces:
+      end
+      write "end"
+    when "at-keyword"
+      write("at_keyword(#{exp[1].dump})")
+    when "hash"
+      write("hash_keyword(#{exp[1].dump})")
+    when "error"
+      write("consume_error(#{exp[1].dump})")
+    when "url"
+      write("url(#{exp[1].dump})")
+    when "percentage"
+      val, kind = exp[2...]
+      write("percentage(#{val}, :#{kind})")
+    when "unicode-range"
+      start_at, end_at = exp[1...]
+      write("unicode_range(#{start_at}, #{end_at})")
+    else
+      write "# TODO: #{e.first}!"
+    end
+  end
+
+  def run_blocks!(exp, strip_spaces: true)
+    return if exp.nil?
+    return write "empty!" if exp.empty?
+
+    if strip_spaces
+      exp.shift while exp.first == " "
+      exp.pop while exp.last == " "
+    end
+
     exp.each do |e|
-      if e.is_a? String
-        next if e == ";"
-        write "string #{e.inspect}"
-        next
-      end
-
-      case e.first
-      when "declaration"
-        name, body, important = e[1...]
-        write "decl(#{name.dump}, important: #{important}) do"
-        inc do
-          run_blocks!(body)
-        end
-        write "end"
-      when "{}"
-        write "block(\"{\") do"
-        inc do
-          run_blocks!(e[1...])
-        end
-        write "end"
-      when "[]"
-        write "block(\"[\") do"
-        inc do
-          run_blocks!(e[1...])
-        end
-        write "end"
-      when "()"
-        write "block(\"(\") do"
-        inc do
-          run_blocks!(e[1...])
-        end
-        write "end"
-      when "ident"
-        write "ident #{e[1].inspect}"
-      when "number"
-        raw, value, type = e[1...]
-        write "number #{raw.inspect}, :#{type}"
-      when "string"
-        write "string #{e[1].inspect}"
-      when "at-rule"
-        name, prelude, block = e[1...]
-        write "at_rule(#{name.inspect}) do"
-        inc do
-          write "prelude do"
-          inc do
-            run_blocks! prelude
-          end
-          write "end"
-        end
-
-        unless body.nil?
-          write "body do"
-          inc do
-            run_blocks! block
-          end
-          write "end"
-        end
-        write("end")
-      when "qualified rule"
-        prelude, block = e[1...]
-        write "q_rule do"
-        inc do
-          write "prelude do"
-          inc do
-            run_blocks! prelude
-          end
-          write "end"
-
-          write "body do"
-          inc do
-            run_blocks! block
-          end
-          write "end"
-        end
-        write "end"
-      else
-        write "# TODO: #{e.first}"
-      end
+      run_single!(e, strip_spaces:)
     end
   end
 end
@@ -192,6 +250,14 @@ files.each do |file, opts|
   app = App.new(file, data, opts)
   app.run!
   val = app.value.split("\n").map(&:rstrip).join("\n")
+  val = [
+    "# frozen_string_literal: true",
+    "",
+    "# Autogenerated code. This code was generated by bin/gen-specs.rb. DO NOT EDIT.",
+    "# Edits will be lost once the generator is run again.",
+    "",
+    ""
+  ].join("\n").concat(val)
   v, * = file.split(".")
   File.write(File.join("spec", "parsing_tests", "#{v}_spec.rb"), val)
 end

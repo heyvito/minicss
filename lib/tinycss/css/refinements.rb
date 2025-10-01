@@ -31,7 +31,7 @@ module TinyCSS
         end
 
         def uni = unpack1("U")
-        def ident_start? = letter? || non_ascii_ident? || self == "_"
+        def ident_start? = letter? || uni >= 0x80 || self == "_"
         def ident_point? = ident_start? || digit? || uni == 0x2D
 
         def non_printable?

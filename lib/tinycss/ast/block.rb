@@ -6,7 +6,7 @@ module TinyCSS
       attr_accessor :associated_token, :value
       def initialize(css)
         @associated_token = css.associated_token
-        @value = css.value
+        @value = css.value.map { AST.convert(it) }
       end
     end
   end

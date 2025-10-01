@@ -94,20 +94,29 @@ module TinyCSS
 
       def consume_escaped_code_point
         p = peek
-        result = []
+
         return REPLACEMENT_CHARACTER if p.eof?
-        return consume unless p.hex?
 
-        max = 6
-        while peek.hex? && max.positive?
-          result << consume
-          max -= 1
+        # Case 1: Hex escape
+        if p.hex?
+          result = []
+          max = 6
+          while peek.hex? && max.positive?
+            result << consume
+            max -= 1
+          end
+          consume if peek.whitespace?
+          val = result.join.hex
+          return REPLACEMENT_CHARACTER if val.zero? || val.surrogate? || val.overflows_maximum_codepoint?
+          return [val].pack("U")
         end
-        consume if peek.whitespace?
-        val = result.join.hex
-        return REPLACEMENT_CHARACTER if val.zero? || val.surrogate? || val.overflows_maximum_codepoint?
 
-        [val].pack("U")
+        # Case 2: Single-character escape
+        # If it's NOT hex and NOT newline, consume the next character
+        return consume unless p.newline?
+
+        # Case 3: Backslash followed by newline → parse error, return U+FFFD
+        REPLACEMENT_CHARACTER
       end
 
       def ident_sequence_start?
@@ -149,7 +158,7 @@ module TinyCSS
 
       def hydrate_tokens
         @tokens.each do |tok|
-          tok.literal = @input[tok.pos_start.offset...tok.pos_end.offset].join
+          tok.literal ||= @input[tok.pos_start.offset...tok.pos_end.offset].join
         end
       end
 
@@ -170,16 +179,17 @@ module TinyCSS
 
         when NUMBER_SIGN
           start_token!
-          if !peek1.ident_point? && !valid_escape?
+
+          if peek1.ident_point? || valid_escape?(@input[@idx+1..@idx+3])
             consume
-            push_token(:delim)
+            flag = peek.ident_start? ? :id : :unrestricted
+            value = consume_ident_sequence
+            push_token(:hash, literal: "##{value}", flag:)
             return
           end
 
           consume
-          flag = ident_sequence_start? ? :id : :unrestricted
-          value = consume_ident_sequence
-          push_token(:hash, value:, flag:)
+          push_token(:delim)
 
         when APOSTROPHE
           consume_string_token
@@ -195,7 +205,7 @@ module TinyCSS
           push_token(:right_parenthesis)
 
         when PLUS_SIGN
-          if peek1.digit?
+          if peek1.digit? || (peek1 == FULL_STOP && @input[@idx + 2].digit?)
             consume_numeric_token
           else
             start_token!
@@ -209,7 +219,7 @@ module TinyCSS
           push_token(:comma)
 
         when HYPHEN_MINUS
-          if peek1.digit?
+          if peek1.digit? || (peek1 == FULL_STOP && @input[@idx + 2].digit?)
             consume_numeric_token
             return
           end
@@ -264,8 +274,8 @@ module TinyCSS
           consume
 
           if ident_sequence_start?
-            consume_ident_sequence
-            push_token(:at_keyword)
+            val = consume_ident_sequence
+            push_token(:at_keyword, literal: "@#{val}")
             return
           end
 
@@ -316,10 +326,11 @@ module TinyCSS
       end
 
       def consume_unicode_range
+        start_token!
         2.times { consume }
         tmp = []
-        tmp << consume while peek.hex? && tmp.length <= 6
-        tmp << consume while peek == QUESTION_MARK && tmp.length <= 6
+        tmp << consume while peek.hex? && tmp.length < 6
+        tmp << consume while peek == QUESTION_MARK && tmp.length < 6
         end_range = 0
 
         if tmp.include? QUESTION_MARK
@@ -330,8 +341,9 @@ module TinyCSS
 
         start_range = tmp.join.hex
         if peek == HYPHEN_MINUS && peek1.hex?
+          consume # consume HYPHEN_MINUS
           tmp.clear
-          tmp << consume while peek.hex? && tmp.length <= 6
+          tmp << consume while peek.hex? && tmp.length < 6
           end_range = tmp.join.hex
         else
           end_range = start_range
@@ -386,6 +398,7 @@ module TinyCSS
       def consume_string_token(closing_token = nil)
         closing_token ||= consume
         start_token!
+        str = []
 
         until eof?
           char = peek
@@ -395,26 +408,28 @@ module TinyCSS
           when REVERSE_SOLIDUS
             p1 = peek1
             if p1.eof?
-              consume # Consume REVERSE_SOLIDUS
+              consume
               next
             elsif p1.newline?
-              2.times { consume } # Consume REVERSE_SOLIDUS + NEWLINE
+              2.times { consume }
+              next
             elsif valid_escape?
-              consume # consume REVERSE_SOLIDUS
-              consume_escaped_code_point
+              consume
+              escaped = consume_escaped_code_point
+              str << escaped if escaped
+              next
             end
           else
             if char.newline?
               push_token(:bad_string)
               return
             end
-
-            consume
+            str << consume
           end
         end
 
-        push_token(:string)
-        consume unless eof? # Consume closing_token
+        push_token(:string, literal: str.join)
+        consume unless eof?
       end
 
       def consume_numeric_token
@@ -447,7 +462,7 @@ module TinyCSS
 
         if peek == FULL_STOP && peek1.digit?
           number_part << consume
-          number_part << consume if peek.digit?
+          number_part << consume while peek.digit?
           type = :number
         end
 
@@ -461,7 +476,7 @@ module TinyCSS
           type = :number
         end
 
-        value = number_part.join.to_i(10)
+        value = number_part.join.to_f
 
         unless exponent_part.empty?
           exponent = 10 ** exponent_part.join.to_i(10)
@@ -487,11 +502,11 @@ module TinyCSS
 
         if peek == LEFT_PARENTHESIS
           consume
-          push_token(:function, value: str)
+          push_token(:function, literal: "#{str}(", name: str)
           return
         end
 
-        push_token(:ident, value: str)
+        push_token(:ident, literal: str)
       end
 
       def consume_url_token

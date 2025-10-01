@@ -7,7 +7,7 @@ module TinyCSS
 
       def initialize(decl)
         @name = decl.name.literal
-        @value = decl.value.map(&:literal)
+        @value = decl.value.map { AST.convert(it) }
         @important = decl.important
       end
 
