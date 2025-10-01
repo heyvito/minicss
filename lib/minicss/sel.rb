@@ -9,29 +9,29 @@ module MiniCSS
     STRING_SENTINEL = "\uE001"
 
     TOKENS = {
-      "attribute" => /\[\s*(?:(?<namespace>\*|[-\w\p{^ASCII}]*)\|)?(?<name>[-\w\p{^ASCII}]+)\s*(?:(?<operator>\W?=)\s*(?<value>.+?)\s*(\s(?<caseSensitive>[iIsS]))?\s*)?\]/u,
-      "id" => /#(?<name>[-\w\p{^ASCII}]+)/u,
-      "class" => /\.(?<name>[-\w\p{^ASCII}]+)/u,
-      "comma" => /\s*,\s*/u,
-      "combinator" => /\s*[\s>+~]\s*/u,
-      "pseudo-element" => /::(?<name>[-\w\p{^ASCII}]+)(?:\((?<argument>¶*)\))?/u,
-      "pseudo-class" => /:(?<name>[-\w\p{^ASCII}]+)(?:\((?<argument>¶*)\))?/u,
-      "universal" => /(?:(?<namespace>\*|[-\w\p{^ASCII}]*)\|)?\*/u,
-      "type" => /(?:(?<namespace>\*|[-\w\p{^ASCII}]*)\|)?(?<name>[-\w\p{^ASCII}]+)/u
+      attribute: /\[\s*(?:(?<namespace>\*|[-\w\p{^ASCII}]*)\|)?(?<name>[-\w\p{^ASCII}]+)\s*(?:(?<operator>\W?=)\s*(?<value>.+?)\s*(\s(?<caseSensitive>[iIsS]))?\s*)?\]/u,
+      id: /#(?<name>[-\w\p{^ASCII}]+)/u,
+      class: /\.(?<name>[-\w\p{^ASCII}]+)/u,
+      comma: /\s*,\s*/u,
+      combinator: /\s*[\s>+~]\s*/u,
+      pseudo_element: /::(?<name>[-\w\p{^ASCII}]+)(?:\((?<argument>¶*)\))?/u,
+      pseudo_class: /:(?<name>[-\w\p{^ASCII}]+)(?:\((?<argument>¶*)\))?/u,
+      universal: /(?:(?<namespace>\*|[-\w\p{^ASCII}]*)\|)?\*/u,
+      type: /(?:(?<namespace>\*|[-\w\p{^ASCII}]*)\|)?(?<name>[-\w\p{^ASCII}]+)/u
     }.freeze
 
     ARGUMENT_PATTERNS = {
-      "pseudo-element" => Regexp.new(
-        TOKENS["pseudo-element"].source.sub("(?<argument>¶*)", "(?<argument>.*)"),
-        TOKENS["pseudo-element"].options
+      :pseudo_element => Regexp.new(
+        TOKENS[:pseudo_element].source.sub("(?<argument>¶*)", "(?<argument>.*)"),
+        TOKENS[:pseudo_element].options
       ),
-      "pseudo-class" => Regexp.new(
-        TOKENS["pseudo-class"].source.sub("(?<argument>¶*)", "(?<argument>.*)"),
-        TOKENS["pseudo-class"].options
+      :pseudo_class => Regexp.new(
+        TOKENS[:pseudo_class].source.sub("(?<argument>¶*)", "(?<argument>.*)"),
+        TOKENS[:pseudo_class].options
       )
     }.freeze
 
-    TRIM_TOKENS = Set.new(%w[combinator comma]).freeze
+    TRIM_TOKENS = Set.new(%i[combinator comma]).freeze
 
     RECURSIVE_PSEUDO_CLASSES = Set.new(
       %w[not is where has matches -moz-any -webkit-any nth-child nth-last-child]
@@ -97,7 +97,7 @@ module MiniCSS
 
           parts << before if before && !before.empty?
 
-          named = match.named_captures.transform_keys(&:to_sym)
+          named = match.named_captures.transform_keys(&:to_sym).compact
           parts << named.merge(type: type, content: content)
 
           parts << after if after && !after.empty?
@@ -189,7 +189,7 @@ module MiniCSS
         end
 
         match.named_captures.each do |key, value|
-          token[key.to_sym] = value
+          token[key.to_sym] = value if value
         end
       end
 
@@ -197,12 +197,12 @@ module MiniCSS
     end
 
     def nest_tokens(tokens, list: true)
-      if list && tokens.any? { |t| t[:type] == "comma" }
+      if list && tokens.any? { |t| t[:type] == :comma }
         selectors = []
         temp = []
 
         tokens.each_with_index do |token, index|
-          if token[:type] == "comma"
+          if token[:type] == :comma
             raise ArgumentError, "Incorrect comma at #{index}" if temp.empty?
 
             selectors << nest_tokens(temp, list: false)
@@ -215,26 +215,26 @@ module MiniCSS
         raise ArgumentError, "Trailing comma" if temp.empty?
 
         selectors << nest_tokens(temp, list: false)
-        return { type: "list", list: selectors }
+        return { type: :list, list: selectors }
       end
 
       (tokens.length - 1).downto(0) do |i|
         token = tokens[i]
-        next unless token[:type] == "combinator"
+        next unless token[:type] == :combinator
 
         left = tokens[0...i]
         right = tokens[(i + 1)..] || []
 
         if left.empty?
           return {
-            type: "relative",
+            type: :relative,
             combinator: token[:content],
             right: nest_tokens(right)
           }
         end
 
         return {
-          type: "complex",
+          type: :complex,
           combinator: token[:content],
           left: nest_tokens(left),
           right: nest_tokens(right)
@@ -247,7 +247,7 @@ module MiniCSS
       when 1
         tokens.first
       else
-        { type: "compound", list: tokens.dup }
+        { type: :compound, list: tokens.dup }
       end
     end
 
@@ -255,14 +255,14 @@ module MiniCSS
       return enum_for(:flatten, node, parent) unless block_given?
 
       case node[:type]
-      when "list"
+      when :list
         node[:list].each { |child| flatten(child, node, &block) }
-      when "complex"
+      when :complex
         flatten(node[:left], node, &block)
         flatten(node[:right], node, &block)
-      when "relative"
+      when :relative
         flatten(node[:right], node, &block)
-      when "compound"
+      when :compound
         node[:list].each { |token| block.call(token, node) }
       else
         block.call(node, parent)
@@ -287,7 +287,7 @@ module MiniCSS
       return ast unless recursive
 
       flatten(ast).each do |token, _|
-        next unless token[:type] == "pseudo-class"
+        next unless token[:type] == :pseudo_class
 
         argument = token[:argument]
         next unless argument
@@ -316,15 +316,15 @@ module MiniCSS
       return list_or_node.map { |token| token[:content] }.join if list_or_node.is_a?(Array)
 
       case list_or_node[:type]
-      when "list"
+      when :list
         list_or_node[:list].map { |node| stringify(node) }.join(",")
-      when "relative"
+      when :relative
         list_or_node[:combinator] + stringify(list_or_node[:right])
-      when "complex"
+      when :complex
         stringify(list_or_node[:left]) +
           list_or_node[:combinator] +
           stringify(list_or_node[:right])
-      when "compound"
+      when :compound
         list_or_node[:list].map { |node| stringify(node) }.join
       else
         list_or_node[:content]
@@ -343,7 +343,7 @@ module MiniCSS
       ast = parse(selector, recursive: true) if selector.is_a?(String)
       return [] unless ast
 
-      if ast.is_a?(Hash) && ast[:type] == "list"
+      if ast.is_a?(Hash) && ast[:type] == :list
         base = 10
         specificities = ast[:list].map do |entry|
           sp = specificity(entry)
@@ -357,13 +357,13 @@ module MiniCSS
       ret = [0, 0, 0]
       flatten(ast).each do |token, _|
         case token[:type]
-        when "id"
+        when :id
           ret[0] += 1
-        when "class", "attribute"
+        when :class, :attribute
           ret[1] += 1
-        when "pseudo-element", "type"
+        when :pseudo_element, :type
           ret[2] += 1
-        when "pseudo-class"
+        when :pseudo_class
           next if token[:name] == "where"
 
           unless RECURSIVE_PSEUDO_CLASSES.include?(token[:name]) && token[:subtree]
