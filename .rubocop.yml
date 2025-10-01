@@ -4,6 +4,7 @@ AllCops:
   SuggestExtensions: false
   Exclude:
     - spec/parsing_tests/*
+    - vendor/**/*
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
