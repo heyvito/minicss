@@ -16,6 +16,6 @@ RSpec.describe TinyCSS do
     tokenizer = TinyCSS::CSS::Tokenizer.new(style)
     tokenizer.tokenize
     parser = TinyCSS::CSS::Parser.new(tokenizer.tokens)
-    sheet = parser.parse_stylesheet
+    parser.parse_stylesheet
   end
 end

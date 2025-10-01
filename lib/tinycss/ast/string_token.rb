@@ -4,6 +4,7 @@ module TinyCSS
   module AST
     class StringToken
       attr_accessor :value, :quoting
+
       def initialize(css)
         @value = css.literal
         @quoting = css.opts[:quoting]

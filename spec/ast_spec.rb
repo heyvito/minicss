@@ -17,7 +17,7 @@ RSpec.describe TinyCSS::AST do
     tok.tokenize
     par = TinyCSS::CSS::Parser.new(tok.tokens)
     sheet = par.parse_stylesheet
-    r = TinyCSS::AST.convert(sheet)
+    TinyCSS::AST.convert(sheet)
   end
 
   it "parses an at-rule" do

@@ -42,7 +42,6 @@ module TinyCSS
       when CSS::SyntaxError
         SyntaxError.new(css.message)
       else
-        debugger
         raise "Unexpected input type #{css.class} for conversion"
       end
     end
@@ -66,7 +65,7 @@ module TinyCSS
       when :string
         StringToken.new(css)
       else
-        debugger
+        raise "Unexpected token in conversion pipeline: #{css.class} #{css.inspect}"
       end
     end
   end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BodyMatcher
   def self.match(node, &) = new(node, &).match
 
@@ -42,7 +44,7 @@ class BodyMatcher
       expect(peek.value).to eq raw
       consume
     else
-      debugger
+      fail "Expected #{peek.class} to be either a String or AST::Number"
     end
   end
 end

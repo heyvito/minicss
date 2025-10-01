@@ -17,7 +17,7 @@ RSpec.describe TinyCSS::Serializer do
 
   it "reserialize a CSS file" do
     ast = File.open(fixture_path("vito_io.css")) { TinyCSS.parse(it) }
-    dump = TinyCSS.serialize(ast)
+    TinyCSS.serialize(ast)
   end
 
   it "deserializes and reserializes strings with whitespaces" do

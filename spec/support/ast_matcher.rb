@@ -1,7 +1,9 @@
-require_relative 'rspec_helpers'
-require_relative 'body_matcher'
-require_relative 'block_prelude_matcher'
-require_relative 'linear_matcher'
+# frozen_string_literal: true
+
+require_relative "rspec_helpers"
+require_relative "body_matcher"
+require_relative "block_prelude_matcher"
+require_relative "linear_matcher"
 
 class ASTMatcher
   include RSpecHelpers
@@ -32,21 +34,18 @@ class ASTMatcher
   end
 
   def string(val)
-    debugger unless peek.is_a?(TinyCSS::AST::StringToken)
     expect(peek).to be_a(TinyCSS::AST::StringToken), "Expected StringToken, but found #{peek.class} instead at index #{@idx}"
     expect(peek.value).to eq(val), "Expected #{peek.inspect} to match #{val.inspect} at index #{@idx}"
     consume
   end
 
   def ident(val)
-    debugger unless peek.is_a?(String)
     expect(peek).to be_a(String), "Expected String, but found #{peek.class} instead at index #{@idx}"
     expect(peek).to eq(val), "Expected #{peek.inspect} to match #{val.inspect} at index #{@idx}"
     consume
   end
 
   def delim(val)
-    debugger unless peek.is_a?(String)
     expect(peek).to be_a(String), "Expected String, but found #{peek.class} instead at index #{@idx}"
     expect(peek).to eq(val), "Expected #{peek.inspect} to match #{val.inspect} at index #{@idx}"
     consume
@@ -56,9 +55,9 @@ class ASTMatcher
     case val
     when TinyCSS::AST::DeclList
       obj = val.find { it.name == name }
-      expect(obj).not_to be_nil {
+      expect(obj).not_to(be_nil do
         "Expected #{val} to contain a Decl named #{name.inspect} at index #{@idx}"
-      }
+      end)
       match_decl(obj, name, important, &)
 
     when TinyCSS::AST::Decl
@@ -84,7 +83,6 @@ class ASTMatcher
 
   def function(name, &)
     expect(peek).to be_a(TinyCSS::AST::Function), "expected #{peek.class} to be a Function at index #{@idx}"
-    debugger if peek.name != name
     expect(peek.name).to eq name
     ASTMatcher.new(peek.value).instance_exec(&)
     consume
@@ -116,25 +114,22 @@ class ASTMatcher
   end
 
   def at_keyword(name)
-    expect(peek.gsub(/^@/, '')).to eq name
+    expect(peek.gsub(/^@/, "")).to eq name
     consume
   end
 
   def hash_keyword(name)
-    expect(peek.gsub(/^#/, '')).to eq name
+    expect(peek.gsub(/^#/, "")).to eq name
     consume
   end
 
   def consume_error(kind)
-    return if ["eof-in-string", "eof-in-url", "invalid"].include? kind
-    debugger if peek.nil?
-    unless [TinyCSS::AST::BadToken, TinyCSS::AST::SyntaxError].include?(peek.class)
-      fail "expected #{peek.class} to be either BadToken or SyntaxError at index #{@idx}"
-    end
+    return if %w[eof-in-string eof-in-url invalid].include? kind
+    fail "expected #{peek.class} to be either BadToken or SyntaxError at index #{@idx}" unless [TinyCSS::AST::BadToken, TinyCSS::AST::SyntaxError].include?(peek.class)
 
     case peek
     when TinyCSS::AST::BadToken
-      expect(peek.kind).to eq kind.gsub(/-/, '_').to_sym
+      expect(peek.kind).to eq kind.gsub("-", "_").to_sym
     when TinyCSS::AST::SyntaxError
       expect(peek.reason).to eq kind
     end

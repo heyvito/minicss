@@ -29,14 +29,17 @@ module TinyCSS
       def parse_rule
         stream.discard_whitespace
         return SyntaxError.new("empty") if stream.empty?
+
         result = if stream.peek.kind == :at_keyword
           consume_at_rule
         else
           consume_qualified_rule
         end
         return SyntaxError.new("invalid") unless result
+
         stream.discard_whitespace
         return SyntaxError.new("extra-input") unless stream.empty?
+
         result
       end
 
@@ -320,11 +323,11 @@ module TinyCSS
         return if !assert_next_token(:left_curly) && !assert_next_token(:left_square_bracket) && !assert_next_token(:left_parenthesis)
 
         block = AST::SimpleBlock.new(associated_token: stream.consume.kind)
-        ending_token = case block.associated_token
-        when :left_curly then :right_curly
-        when :left_parenthesis then :right_parenthesis
-        when :left_square_bracket then :right_square_bracket
-        end
+        ending_token = {
+          left_curly: :right_curly,
+          left_parenthesis: :right_parenthesis,
+          left_square_bracket: :right_square_bracket
+        }[block.associated_token]
 
         loop do
           case stream.peek.kind

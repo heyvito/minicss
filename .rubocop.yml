@@ -2,6 +2,8 @@ AllCops:
   TargetRubyVersion: 3.4
   NewCops: enable
   SuggestExtensions: false
+  Exclude:
+    - spec/parsing_tests/*
 
 Style/StringLiterals:
   EnforcedStyle: double_quotes
@@ -50,3 +52,15 @@ Layout/SpaceAroundOperators:
 
 Layout/EndAlignment:
   EnforcedStyleAlignWith: start_of_line
+
+Style/SignalException:
+  Exclude:
+    - spec/**/*
+
+Naming/PredicateMethod:
+  Exclude:
+    - lib/tinycss/css/parser.rb
+
+Lint/HashCompareByIdentity:
+  Exclude:
+    - lib/tinycss/sel.rb

@@ -6,7 +6,7 @@ module TinyCSS
       class AtRule
         attr_accessor :name, :prelude, :child_rules
 
-        def initialize(name:, prelude: nil, decls: nil, child_rules: nil)
+        def initialize(name:, prelude: nil, child_rules: nil)
           @name = name
           @prelude = prelude || []
           @child_rules = child_rules || []

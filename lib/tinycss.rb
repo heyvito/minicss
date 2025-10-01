@@ -11,7 +11,7 @@ module TinyCSS
   module_function
 
   def tokenize(input, allow_unicode_ranges: false)
-    tok = CSS::Tokenizer.new(input,allow_unicode_ranges:)
+    tok = CSS::Tokenizer.new(input, allow_unicode_ranges:)
     tok.tokenize
     tok.tokens
   end

@@ -108,6 +108,7 @@ module TinyCSS
           consume if peek.whitespace?
           val = result.join.hex
           return REPLACEMENT_CHARACTER if val.zero? || val.surrogate? || val.overflows_maximum_codepoint?
+
           return [val].pack("U")
         end
 
@@ -174,13 +175,13 @@ module TinyCSS
         consume_comments
         consume_whitespace
         case peek
-        when QUOTATION_MARK
+        when QUOTATION_MARK, APOSTROPHE
           consume_string_token
 
         when NUMBER_SIGN
           start_token!
 
-          if peek1.ident_point? || valid_escape?(@input[@idx+1..@idx+3])
+          if peek1.ident_point? || valid_escape?(@input[(@idx + 1)..(@idx + 3)])
             consume
             flag = peek.ident_start? ? :id : :unrestricted
             value = consume_ident_sequence
@@ -190,9 +191,6 @@ module TinyCSS
 
           consume
           push_token(:delim)
-
-        when APOSTROPHE
-          consume_string_token
 
         when LEFT_PARENTHESIS
           start_token!

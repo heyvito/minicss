@@ -6,7 +6,7 @@ module TinyCSS
       attr_accessor :unit
 
       def initialize(css)
-        super(css)
+        super
         @unit = css.opts[:unit]
       end
     end

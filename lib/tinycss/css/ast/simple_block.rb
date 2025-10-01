@@ -4,6 +4,18 @@ module TinyCSS
   module CSS
     module AST
       class SimpleBlock
+        RIGHT_TOKENS = {
+          left_parenthesis: ")",
+          left_curly: "}",
+          left_square_bracket: "]"
+        }.freeze
+
+        LEFT_TOKENS = {
+          left_parenthesis: "(",
+          left_curly: "{",
+          left_square_bracket: "["
+        }.freeze
+
         attr_accessor :associated_token, :value
 
         def initialize(associated_token:)
@@ -13,21 +25,8 @@ module TinyCSS
 
         def kind = :simple_block
 
-        def right_token
-          case associated_token
-          when :left_parenthesis then ")"
-          when :left_curly then "}"
-          when :left_square_bracket then "]"
-          end
-        end
-
-        def left_token
-          case associated_token
-          when :left_parenthesis then "("
-          when :left_curly then "{"
-          when :left_square_bracket then "["
-          end
-        end
+        def right_token = RIGHT_TOKENS[associated_token]
+        def left_token = LEFT_TOKENS[associated_token]
 
         def literal
           [left_token, @value.map(&:literal), right_token].join

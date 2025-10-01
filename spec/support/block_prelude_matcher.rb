@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class BlockPreludeMatcher
   def self.match(node, &) = new(node, &).match
 

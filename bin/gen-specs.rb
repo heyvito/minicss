@@ -1,4 +1,5 @@
 #!/usr/bin/env ruby
+# frozen_string_literal: true
 
 require "debug"
 require "json"
@@ -55,12 +56,10 @@ class App
           write "tok.tokenize"
           write "par = TinyCSS::CSS::Parser.new(tok.tokens)"
           case @opts.fetch(:type)
-          when :blocks
+          when :blocks, :declarations
             write "sheet = par.parse_block_contents"
           when :component_value_list
             write "sheet = par.parse_component_value_list"
-          when :declarations
-            write "sheet = par.parse_block_contents"
           when :component_value
             write "sheet = [par.parse_component_value]"
           when :declaration
@@ -77,22 +76,12 @@ class App
           write "match_ast(r) do"
           inc do
             case opts&.fetch(:type)
-            when :blocks
+            when :blocks, :declarations
               run_blocks!(exp)
-            when :component_value_list
+            when :component_value_list, :stylesheet, :rule_list
               run_blocks!(exp, strip_spaces: false)
-            when :declarations
-              run_blocks!(exp)
-            when :component_value
+            when :component_value, :declaration, :rule
               run_single!(exp, strip_spaces: false)
-            when :declaration
-              run_single!(exp, strip_spaces: false)
-            when :rule
-              run_single!(exp, strip_spaces: false)
-            when :rule_list
-              run_blocks!(exp, strip_spaces: false)
-            when :stylesheet
-              run_blocks!(exp, strip_spaces: false)
             end
           end
           write "end"
@@ -104,7 +93,7 @@ class App
     write "end"
   end
 
-  DELIM_TOKENS = ["/", " ", ".", "~", ",", "*", "-->", ">", "\\", "@", "#", "=", "?", "+", "-", "|", "^", "$", "<!--", ":", ";", "]", ")", "!"]
+  DELIM_TOKENS = ["/", " ", ".", "~", ",", "*", "-->", ">", "\\", "@", "#", "=", "?", "+", "-", "|", "^", "$", "<!--", ":", ";", "]", ")", "!"].freeze
 
   def run_single!(exp, strip_spaces: true)
     return if exp.nil?
@@ -127,7 +116,8 @@ class App
     case exp.first
     when "declaration"
       name, body, important = exp[1...]
-      debugger if important.nil?
+      raise "incomplete delcaration specification: #{exp}. Missing last argument 'important'" if important.nil?
+
       write "decl(#{name.dump}, important: #{important}) do"
       inc do
         run_blocks!(body, strip_spaces:)
@@ -195,7 +185,7 @@ class App
       end
       write "end"
     when "dimension"
-      repr, val, type, unit = exp[1...]
+      val, type, unit = exp[2...]
       type = type.to_sym
       write "dimension(#{val}, #{type.inspect}, #{unit.dump})"
     when "function"
@@ -247,7 +237,7 @@ files = {
   "one_rule.json" => { type: :rule },
   "rule_list.json" => { type: :rule_list },
   "stylesheet.json" => { type: :stylesheet },
-  "stylesheet_bytes.json" => nil,
+  "stylesheet_bytes.json" => nil
 }
 
 files.each do |file, opts|
