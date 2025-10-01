@@ -123,7 +123,7 @@ RSpec.describe "css-parsing-tests: rule_list.json" do
       at_rule("foo") do
         prelude do
           block("[") do
-            string " "
+            delim " "
             ident "bar"
           end
         end
@@ -143,9 +143,9 @@ RSpec.describe "css-parsing-tests: rule_list.json" do
       q_rule do
         prelude do
           ident "div"
-          string " "
-          string ">"
-          string " "
+          delim " "
+          delim ">"
+          delim " "
           ident "p"
         end
         body do
@@ -241,7 +241,7 @@ RSpec.describe "css-parsing-tests: rule_list.json" do
       q_rule do
         prelude do
           ident "div"
-          string " "
+          delim " "
         end
         body do
           empty!

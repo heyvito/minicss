@@ -428,7 +428,7 @@ module TinyCSS
           end
         end
 
-        push_token(:string, literal: str.join)
+        push_token(:string, literal: str.join, quoting: closing_token)
         consume unless eof?
       end
 

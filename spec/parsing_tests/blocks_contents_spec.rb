@@ -31,7 +31,7 @@ RSpec.describe "css-parsing-tests: blocks_contents.json" do
       end
       decl("c", important: true) do
         ident "d"
-        string " "
+        delim " "
         number 42, :integer
       end
     end
@@ -64,7 +64,7 @@ RSpec.describe "css-parsing-tests: blocks_contents.json" do
     match_ast(r) do
       decl("z", important: false) do
         ident "x"
-        string "!"
+        delim "!"
       end
       decl("a", important: false) do
         ident "b"
@@ -149,10 +149,10 @@ RSpec.describe "css-parsing-tests: blocks_contents.json" do
     match_ast(r) do
       q_rule do
         prelude do
-          string "@"
-          string " "
+          delim "@"
+          delim " "
           ident "media"
-          string " "
+          delim " "
           ident "screen"
         end
         body do
@@ -192,7 +192,7 @@ RSpec.describe "css-parsing-tests: blocks_contents.json" do
       q_rule do
         prelude do
           ident "a"
-          string " "
+          delim " "
           ident "b"
         end
         body do
@@ -241,7 +241,7 @@ RSpec.describe "css-parsing-tests: blocks_contents.json" do
       q_rule do
         prelude do
           ident "a"
-          string ":"
+          delim ":"
           ident "hover"
         end
         body do
@@ -268,7 +268,7 @@ RSpec.describe "css-parsing-tests: blocks_contents.json" do
       q_rule do
         prelude do
           ident "a"
-          string " "
+          delim " "
           ident "b"
         end
         body do

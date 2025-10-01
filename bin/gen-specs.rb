@@ -104,12 +104,18 @@ class App
     write "end"
   end
 
+  DELIM_TOKENS = ["/", " ", ".", "~", ",", "*", "-->", ">", "\\", "@", "#", "=", "?", "+", "-", "|", "^", "$", "<!--", ":", ";", "]", ")", "!"]
+
   def run_single!(exp, strip_spaces: true)
     return if exp.nil?
     return write "empty!" if exp.empty?
 
     if exp.is_a? String
-      write "string #{exp.inspect}"
+      if DELIM_TOKENS.include?(exp)
+        write("delim #{exp.inspect}")
+      else
+        write "string #{exp.inspect}"
+      end
       return
     end
 

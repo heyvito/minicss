@@ -26,9 +26,9 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     r = TinyCSS::AST.convert(sheet)
 
     match_ast(r) do
-      string "/"
-      string "*"
-      string "/"
+      delim "/"
+      delim "*"
+      delim "/"
     end
   end
 
@@ -54,9 +54,9 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     r = TinyCSS::AST.convert(sheet)
 
     match_ast(r) do
-      string " "
+      delim " "
       ident "Red"
-      string " "
+      delim " "
     end
   end
 
@@ -70,7 +70,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       ident "red"
-      string "-->"
+      delim "-->"
     end
   end
 
@@ -84,7 +84,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       ident "red--"
-      string ">"
+      delim ">"
     end
   end
 
@@ -98,31 +98,31 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       ident "-"
-      string " "
+      delim " "
       ident "red0"
-      string " "
+      delim " "
       ident "-red"
-      string " "
+      delim " "
       ident "--red"
-      string " "
+      delim " "
       ident "--red blue"
-      string " "
+      delim " "
       dimension(0, :integer, "red")
-      string " "
+      delim " "
       dimension(0, :integer, "red")
-      string " "
+      delim " "
       ident "�red"
-      string " "
+      delim " "
       ident "_Red"
-      string " "
-      string "."
+      delim " "
+      delim "."
       ident "red"
-      string " "
+      delim " "
       ident "rêd"
-      string " "
+      delim " "
       ident "rêd"
-      string " "
-      string "\u007F"
+      delim " "
+      ident "\u007F"
       ident "\u0080\u0081"
     end
   end
@@ -137,29 +137,29 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       ident "0red"
-      string " "
+      delim " "
       ident "0red"
-      string " "
+      delim " "
       ident "0red"
-      string " "
+      delim " "
       ident "�0red"
-      string " "
+      delim " "
       ident "�0red"
-      string " "
+      delim " "
       ident "red"
-      string " "
+      delim " "
       ident "r"
-      string " "
+      delim " "
       ident "ed"
-      string " "
+      delim " "
       ident ".red"
-      string " "
+      delim " "
       ident " red"
-      string " "
-      string "\\"
-      string " "
+      delim " "
+      delim "\\"
+      delim " "
       ident "red"
-      string " "
+      delim " "
       ident "Ͷ76Ͷ76�"
     end
   end
@@ -175,12 +175,12 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     match_ast(r) do
       function("rgba0") do
         string "a"
-        string " "
+        delim " "
         function("rgba1") do
           ident "a"
-          string " "
+          delim " "
           ident "b"
-          string " "
+          delim " "
           function("rgba2") do
             function("rgba3") do
               string "b"
@@ -204,57 +204,57 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
       function("rgba0") do
         empty!
       end
-      string " "
+      delim " "
       function("-rgba") do
         empty!
       end
-      string " "
+      delim " "
       function("--rgba") do
         empty!
       end
-      string " "
+      delim " "
       function("--rgba") do
         empty!
       end
-      string " "
+      delim " "
       dimension(0, :integer, "rgba")
       block("(") do
         empty!
       end
-      string " "
+      delim " "
       dimension(0, :integer, "rgba")
       block("(") do
         empty!
       end
-      string " "
+      delim " "
       function("_rgba") do
         empty!
       end
-      string " "
-      string "."
+      delim " "
+      delim "."
       function("rgba") do
         empty!
       end
-      string " "
+      delim " "
       function("rgb\u00E2") do
         empty!
       end
-      string " "
+      delim " "
       function("0rgba") do
         empty!
       end
-      string " "
+      delim " "
       ident "rgba"
-      string " "
+      delim " "
       block("(") do
         empty!
       end
-      string " "
+      delim " "
       at_keyword("rgba")
       block("(") do
         empty!
       end
-      string " "
+      delim " "
       hash_keyword("rgba")
       block("(") do
         empty!
@@ -272,27 +272,27 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       at_keyword("media0")
-      string " "
+      delim " "
       at_keyword("-Media")
-      string " "
+      delim " "
       at_keyword("--media")
-      string " "
+      delim " "
       at_keyword("--media")
-      string " "
-      string "@"
+      delim " "
+      delim "@"
       dimension(0, :integer, "media")
-      string " "
-      string "@"
+      delim " "
+      delim "@"
       dimension(0, :integer, "media")
-      string " "
+      delim " "
       at_keyword("_media")
-      string " "
-      string "@"
-      string "."
+      delim " "
+      delim "@"
+      delim "."
       ident "media"
-      string " "
+      delim " "
       at_keyword("med\u0130a")
-      string " "
+      delim " "
       at_keyword("0media\uFFFD")
     end
   end
@@ -307,27 +307,27 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       hash_keyword("red0")
-      string " "
+      delim " "
       hash_keyword("-Red")
-      string " "
+      delim " "
       hash_keyword("--red")
-      string " "
+      delim " "
       hash_keyword("--red")
-      string " "
+      delim " "
       hash_keyword("0red")
-      string " "
+      delim " "
       hash_keyword("-0red")
-      string " "
+      delim " "
       hash_keyword("_Red")
-      string " "
-      string "#"
-      string "."
+      delim " "
+      delim "#"
+      delim "."
       ident "red"
-      string " "
+      delim " "
       hash_keyword("r\u00EAd")
-      string " "
+      delim " "
       hash_keyword("\u00EArd")
-      string " "
+      delim " "
       hash_keyword(".red\uFFFD")
     end
   end
@@ -344,7 +344,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
       ident "p"
       block("[") do
         ident "example"
-        string "="
+        delim "="
         string "foo(int x) {   this.x = x;}"
       end
     end
@@ -360,15 +360,15 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       string ""
-      string " "
+      delim " "
       string "Lorem \"îpsum\""
-      string " "
+      delim " "
       string "ab"
-      string " "
+      delim " "
       consume_error("bad-string")
-      string " "
+      delim " "
       ident "b"
-      string " "
+      delim " "
       string "eof"
       consume_error("eof-in-string")
     end
@@ -384,15 +384,15 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       string ""
-      string " "
+      delim " "
       string "Lorem 'îpsum'"
-      string " "
+      delim " "
       string "ab"
-      string " "
+      delim " "
       consume_error("bad-string")
-      string " "
+      delim " "
       ident "b"
-      string " "
+      delim " "
       string "eof"
       consume_error("eof-in-string")
     end
@@ -408,7 +408,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       string "Lorem İpsu m"
-      string " "
+      delim " "
       string "Ͷ76Ͷ76"
       consume_error("eof-in-string")
     end
@@ -424,26 +424,26 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       function("url") do
-        string " "
+        delim " "
         string ""
       end
-      string " "
+      delim " "
       function("url") do
         string "Lorem \"îpsum\""
-        string " "
+        delim " "
       end
-      string " "
+      delim " "
       function("url") do
         string "ab"
-        string " "
+        delim " "
       end
-      string " "
+      delim " "
       function("url") do
         consume_error("bad-string")
-        string " "
+        delim " "
         ident "b"
       end
-      string " "
+      delim " "
       function("url") do
         string "eof"
         consume_error("eof-in-string")
@@ -491,23 +491,23 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
       function("url") do
         string ""
       end
-      string " "
+      delim " "
       function("url") do
         string "Lorem 'îpsum'"
-        string " "
+        delim " "
       end
-      string " "
+      delim " "
       function("url") do
         string "ab"
-        string " "
+        delim " "
       end
-      string " "
+      delim " "
       function("url") do
         consume_error("bad-string")
-        string " "
+        delim " "
         ident "b"
       end
-      string " "
+      delim " "
       function("url") do
         string "eof"
         consume_error("eof-in-string")
@@ -527,7 +527,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
       function("url") do
         string "Lorem İpsu m"
       end
-      string " "
+      delim " "
       function("url") do
         string "Ͷ76Ͷ76"
         consume_error("eof-in-string")
@@ -545,27 +545,27 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       url("foo")
-      string " "
+      delim " "
       url("foo")
-      string " "
+      delim " "
       function("\u00FBrl") do
         ident "foo"
       end
-      string " "
+      delim " "
       ident "url"
-      string " "
+      delim " "
       block("(") do
         ident "foo"
       end
-      string " "
+      delim " "
       function("url ") do
         ident "foo"
       end
-      string " "
+      delim " "
       function("url") do
-        string " "
+        delim " "
         string "foo"
-        string " "
+        delim " "
       end
     end
   end
@@ -581,13 +581,13 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     match_ast(r) do
       function("url") do
         string "a"
-        string " "
+        delim " "
         ident "b"
       end
-      string " "
+      delim " "
       function("url") do
         string "c"
-        string " "
+        delim " "
         ident "d"
       end
     end
@@ -604,13 +604,13 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     match_ast(r) do
       function("url") do
         consume_error("bad-string")
-        string " "
+        delim " "
         ident "b"
       end
-      string " "
+      delim " "
       function("url") do
         consume_error("bad-string")
-        string " "
+        delim " "
       end
     end
   end
@@ -625,33 +625,33 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       url("")
-      string " "
+      delim " "
       url("")
-      string " "
+      delim " "
       url("Fo\u00F40!")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       url("a b")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       url("a(b")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       url("a'b")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       url("a\"b")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       url("a\nb")
-      string " "
+      delim " "
       url("a\uFFFD")
       consume_error("eof-in-url")
     end
@@ -681,59 +681,59 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
-      string " "
+      delim " "
       consume_error("bad-url")
     end
   end
@@ -748,21 +748,21 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       number 12, :integer
-      string " "
+      delim " "
       number 34, :integer
-      string " "
+      delim " "
       number -45, :integer
-      string " "
+      delim " "
       number 0.67, :number
-      string " "
+      delim " "
       number 0.89, :number
-      string " "
+      delim " "
       number -0.01, :number
-      string " "
+      delim " "
       number 2.3, :number
-      string " "
+      delim " "
       number 45, :number
-      string " "
+      delim " "
       number -0.67, :number
     end
   end
@@ -777,21 +777,21 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       number 1200, :number
-      string " "
+      delim " "
       number 340, :number
-      string " "
+      delim " "
       number -45, :number
-      string " "
+      delim " "
       number 680, :number
-      string " "
+      delim " "
       number 0.079, :number
-      string " "
+      delim " "
       number -1, :number
-      string " "
+      delim " "
       number 23, :number
-      string " "
+      delim " "
       number 45000000, :number
-      string " "
+      delim " "
       number -0.67, :number
     end
   end
@@ -806,8 +806,8 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       number 3, :integer
-      string "."
-      string " "
+      delim "."
+      delim " "
     end
   end
 
@@ -821,7 +821,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       dimension(3, :integer, "e-2")
-      string " "
+      delim " "
     end
   end
 
@@ -836,7 +836,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     match_ast(r) do
       number 0.03, :number
       number 0.1, :number
-      string " "
+      delim " "
     end
   end
 
@@ -850,21 +850,21 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       percentage(12, :integer)
-      string " "
+      delim " "
       percentage(34, :integer)
-      string " "
+      delim " "
       percentage(-45, :integer)
-      string " "
+      delim " "
       percentage(0.67, :number)
-      string " "
+      delim " "
       percentage(0.89, :number)
-      string " "
+      delim " "
       percentage(-0.01, :number)
-      string " "
+      delim " "
       percentage(2.3, :number)
-      string " "
+      delim " "
       percentage(45, :number)
-      string " "
+      delim " "
       percentage(-0.67, :number)
     end
   end
@@ -879,21 +879,21 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       percentage(1200, :number)
-      string " "
+      delim " "
       percentage(340, :number)
-      string " "
+      delim " "
       percentage(-45, :number)
-      string " "
+      delim " "
       percentage(680, :number)
-      string " "
+      delim " "
       percentage(0.079, :number)
-      string " "
+      delim " "
       percentage(-1, :number)
-      string " "
+      delim " "
       percentage(23, :number)
-      string " "
+      delim " "
       percentage(45000000, :number)
-      string " "
+      delim " "
       percentage(-0.67, :number)
     end
   end
@@ -908,7 +908,7 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       dimension(12, :integer, "%")
-      string " "
+      delim " "
     end
   end
 
@@ -922,21 +922,21 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       dimension(12, :integer, "px")
-      string " "
+      delim " "
       dimension(34, :integer, "px")
-      string " "
+      delim " "
       dimension(-45, :integer, "px")
-      string " "
+      delim " "
       dimension(0.67, :number, "px")
-      string " "
+      delim " "
       dimension(0.89, :number, "px")
-      string " "
+      delim " "
       dimension(-0.01, :number, "px")
-      string " "
+      delim " "
       dimension(2.3, :number, "px")
-      string " "
+      delim " "
       dimension(45, :number, "px")
-      string " "
+      delim " "
       dimension(-0.67, :number, "px")
     end
   end
@@ -951,21 +951,21 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       dimension(1200, :number, "px")
-      string " "
+      delim " "
       dimension(340, :number, "px")
-      string " "
+      delim " "
       dimension(-45, :number, "px")
-      string " "
+      delim " "
       dimension(680, :number, "px")
-      string " "
+      delim " "
       dimension(0.079, :number, "px")
-      string " "
+      delim " "
       dimension(-1, :number, "px")
-      string " "
+      delim " "
       dimension(23, :number, "px")
-      string " "
+      delim " "
       dimension(45000000, :number, "px")
-      string " "
+      delim " "
       dimension(-0.67, :number, "px")
     end
   end
@@ -980,26 +980,26 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       dimension(12, :integer, "red0")
-      string " "
+      delim " "
       dimension(12, :number, "-red")
-      string " "
+      delim " "
       dimension(12, :integer, "--red")
-      string " "
+      delim " "
       dimension(12, :integer, "--red")
-      string " "
+      delim " "
       dimension(120, :integer, "red")
-      string " "
+      delim " "
       number 12, :integer
       dimension(0, :integer, "red")
-      string " "
+      delim " "
       dimension(12, :integer, "\uFFFDred")
-      string " "
+      delim " "
       dimension(12, :integer, "_Red")
-      string " "
+      delim " "
       number 12, :integer
-      string "."
+      delim "."
       ident "red"
-      string " "
+      delim " "
       dimension(12, :integer, "r\u00EAd")
     end
   end
@@ -1014,17 +1014,17 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(1, 1)
-      string " "
+      delim " "
       unicode_range(16, 16)
-      string " "
+      delim " "
       unicode_range(256, 256)
-      string " "
+      delim " "
       unicode_range(4096, 4096)
-      string " "
+      delim " "
       unicode_range(65536, 65536)
-      string " "
+      delim " "
       unicode_range(1048576, 1048576)
-      string " "
+      delim " "
       unicode_range(1048576, 1048576)
       number 0, :integer
     end
@@ -1040,19 +1040,19 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(0, 15)
-      string " "
+      delim " "
       unicode_range(16, 31)
-      string " "
+      delim " "
       unicode_range(256, 271)
-      string " "
+      delim " "
       unicode_range(4096, 4111)
-      string " "
+      delim " "
       unicode_range(65536, 65551)
-      string " "
+      delim " "
       unicode_range(1048576, 1048591)
-      string " "
+      delim " "
       unicode_range(1048576, 1048576)
-      string "?"
+      delim "?"
     end
   end
 
@@ -1066,17 +1066,17 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(0, 255)
-      string " "
+      delim " "
       unicode_range(256, 511)
-      string " "
+      delim " "
       unicode_range(4096, 4351)
-      string " "
+      delim " "
       unicode_range(65536, 65791)
-      string " "
+      delim " "
       unicode_range(1048576, 1048831)
-      string " "
+      delim " "
       unicode_range(1048576, 1048591)
-      string "?"
+      delim "?"
     end
   end
 
@@ -1090,15 +1090,15 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(0, 4095)
-      string " "
+      delim " "
       unicode_range(4096, 8191)
-      string " "
+      delim " "
       unicode_range(65536, 69631)
-      string " "
+      delim " "
       unicode_range(1048576, 1052671)
-      string " "
+      delim " "
       unicode_range(1048576, 1048831)
-      string "?"
+      delim "?"
     end
   end
 
@@ -1112,13 +1112,13 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(0, 65535)
-      string " "
+      delim " "
       unicode_range(65536, 131071)
-      string " "
+      delim " "
       unicode_range(1048576, 1114111)
-      string " "
+      delim " "
       unicode_range(1048576, 1052671)
-      string "?"
+      delim "?"
     end
   end
 
@@ -1132,11 +1132,11 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(0, 1048575)
-      string " "
+      delim " "
       unicode_range(1048576, 2097151)
-      string " "
+      delim " "
       unicode_range(1048576, 1114111)
-      string "?"
+      delim "?"
     end
   end
 
@@ -1150,9 +1150,9 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(0, 16777215)
-      string " "
+      delim " "
       unicode_range(1048576, 2097151)
-      string "?"
+      delim "?"
     end
   end
 
@@ -1166,13 +1166,13 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       unicode_range(1, 2)
-      string " "
+      delim " "
       unicode_range(1048576, 2)
-      string " "
+      delim " "
       unicode_range(1048576, 1048576)
       number 0, :integer
       number -2, :integer
-      string " "
+      delim " "
       unicode_range(16, 2097152)
     end
   end
@@ -1188,28 +1188,28 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     match_ast(r) do
       ident "ù"
       number 12, :integer
-      string " "
+      delim " "
       ident "Ü"
       number 12, :integer
-      string " "
+      delim " "
       ident "u"
-      string " "
+      delim " "
       number 12, :integer
-      string " "
+      delim " "
       ident "U"
-      string "+"
-      string " "
+      delim "+"
+      delim " "
       number 12, :integer
-      string " "
+      delim " "
       unicode_range(18, 18)
-      string " "
-      string "-"
-      string " "
+      delim " "
+      delim "-"
+      delim " "
       number 20, :integer
-      string " "
+      delim " "
       unicode_range(16, 31)
       number 2, :integer
-      string " "
+      delim " "
       unicode_range(16, 31)
       number -50, :integer
     end
@@ -1224,27 +1224,27 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
     r = TinyCSS::AST.convert(sheet)
 
     match_ast(r) do
-      string "~"
-      string "="
-      string "|"
-      string "="
-      string "^"
-      string "="
-      string "$"
-      string "="
-      string "*"
-      string "="
-      string "|"
-      string "|"
-      string "<!--"
+      delim "~"
+      delim "="
+      delim "|"
+      delim "="
+      delim "^"
+      delim "="
+      delim "$"
+      delim "="
+      delim "*"
+      delim "="
+      delim "|"
+      delim "|"
+      delim "<!--"
       ident "----"
-      string ">"
-      string " "
-      string "|"
-      string "|"
-      string " "
-      string "~"
-      string "="
+      delim ">"
+      delim " "
+      delim "|"
+      delim "|"
+      delim " "
+      delim "~"
+      delim "="
     end
   end
 
@@ -1258,43 +1258,43 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       ident "a"
-      string ":"
+      delim ":"
       function("not") do
         block("[") do
           ident "href"
-          string "^"
-          string "="
+          delim "^"
+          delim "="
           ident "http:"
         end
-        string ","
-        string " "
+        delim ","
+        delim " "
         block("[") do
           ident "href"
-          string " "
-          string "^"
-          string "="
-          string " "
+          delim " "
+          delim "^"
+          delim "="
+          delim " "
           string "https:"
-          string " "
+          delim " "
         end
       end
-      string " "
+      delim " "
       block("{") do
-        string " "
+        delim " "
         ident "color"
-        string ":"
-        string " "
+        delim ":"
+        delim " "
         function("rgba") do
           percentage(0, :integer)
-          string ","
-          string " "
+          delim ","
+          delim " "
           percentage(100, :integer)
-          string ","
-          string " "
+          delim ","
+          delim " "
           percentage(50, :integer)
         end
-        string ";"
-        string " "
+        delim ";"
+        delim " "
       end
     end
   end
@@ -1309,18 +1309,18 @@ RSpec.describe "css-parsing-tests: component_value_list.json" do
 
     match_ast(r) do
       at_keyword("media")
-      string " "
+      delim " "
       ident "print"
-      string " "
+      delim " "
       block("{") do
-        string " "
+        delim " "
         block("(") do
           ident "foo"
-          string "]"
+          delim "]"
           block("{") do
             ident "bar"
-            string ")"
-            string " "
+            delim ")"
+            delim " "
           end
           ident "baz"
         end

@@ -123,7 +123,7 @@ RSpec.describe "css-parsing-tests: stylesheet.json" do
       at_rule("foo") do
         prelude do
           block("[") do
-            string " "
+            delim " "
             ident "bar"
           end
         end
@@ -143,11 +143,11 @@ RSpec.describe "css-parsing-tests: stylesheet.json" do
       q_rule do
         prelude do
           ident "div"
-          string " "
-          string ">"
-          string " "
+          delim " "
+          delim ">"
+          delim " "
           ident "p"
-          string " "
+          delim " "
         end
         body do
           decl("color", important: false) do
@@ -212,8 +212,8 @@ RSpec.describe "css-parsing-tests: stylesheet.json" do
       q_rule do
         prelude do
           ident "a"
-          string "<!--"
-          string "-->"
+          delim "<!--"
+          delim "-->"
         end
         body do
           empty!

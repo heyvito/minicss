@@ -24,8 +24,11 @@ class BodyMatcher
     consume
   end
 
+  def delim(*) = ident(*)
+
   def string(val)
-    expect(peek).to eq val
+    expect(peek).to be_a(TinyCSS::AST::StringToken)
+    expect(peek.value).to eq val
     consume
   end
 

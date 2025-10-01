@@ -32,13 +32,25 @@ class ASTMatcher
   end
 
   def string(val)
-    debugger unless peek.is_a? String
-    expect(peek).to be_a(String), "Expected #{val.class}, but found #{peek.class} instead at index #{@idx}"
+    debugger unless peek.is_a?(TinyCSS::AST::StringToken)
+    expect(peek).to be_a(TinyCSS::AST::StringToken), "Expected StringToken, but found #{peek.class} instead at index #{@idx}"
+    expect(peek.value).to eq(val), "Expected #{peek.inspect} to match #{val.inspect} at index #{@idx}"
+    consume
+  end
+
+  def ident(val)
+    debugger unless peek.is_a?(String)
+    expect(peek).to be_a(String), "Expected String, but found #{peek.class} instead at index #{@idx}"
     expect(peek).to eq(val), "Expected #{peek.inspect} to match #{val.inspect} at index #{@idx}"
     consume
   end
 
-  def ident(val) = string(val)
+  def delim(val)
+    debugger unless peek.is_a?(String)
+    expect(peek).to be_a(String), "Expected String, but found #{peek.class} instead at index #{@idx}"
+    expect(peek).to eq(val), "Expected #{peek.inspect} to match #{val.inspect} at index #{@idx}"
+    consume
+  end
 
   def match_decl(val, name, important, &)
     case val

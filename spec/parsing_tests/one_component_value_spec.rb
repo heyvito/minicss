@@ -65,7 +65,7 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
     r = TinyCSS::AST.convert(sheet)
 
     match_ast(r) do
-      string "."
+      delim "."
     end
   end
 
@@ -106,14 +106,14 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
     match_ast(r) do
       function("rgba") do
         percentage(100, :integer)
-        string ","
-        string " "
+        delim ","
+        delim " "
         percentage(0, :integer)
-        string ","
-        string " "
+        delim ","
+        delim " "
         percentage(50, :integer)
-        string ","
-        string " "
+        delim ","
+        delim " "
         number 0.5, :number
       end
     end
@@ -129,15 +129,15 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
     match_ast(r) do
       block("{") do
-        string " "
+        delim " "
         ident "foo"
-        string ":"
-        string " "
+        delim ":"
+        delim " "
         ident "bar"
-        string ";"
-        string " "
+        delim ";"
+        delim " "
         at_keyword("baz")
-        string " "
+        delim " "
         block("[") do
           consume_error(")")
         end

@@ -13,6 +13,7 @@ require_relative "ast/bad_token"
 require_relative "ast/url"
 require_relative "ast/unicode_range"
 require_relative "ast/syntax_error"
+require_relative "ast/string_token"
 
 module TinyCSS
   module AST
@@ -48,7 +49,7 @@ module TinyCSS
 
     def convert_token(css)
       case css.kind
-      when :delim, :ident, :whitespace, :string, :cdc, :at_keyword, :hash, :cdo, :colon, :comma, :semicolon, :right_square_bracket, :right_parenthesis
+      when :delim, :ident, :whitespace, :cdc, :at_keyword, :hash, :cdo, :colon, :comma, :semicolon, :right_square_bracket, :right_parenthesis
         css.literal
       when :dimension
         Dimension.new(css)
@@ -62,6 +63,8 @@ module TinyCSS
         URL.new(css.opts[:value])
       when :unicode_range
         UnicodeRange.new(css)
+      when :string
+        StringToken.new(css)
       else
         debugger
       end

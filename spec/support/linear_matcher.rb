@@ -14,12 +14,24 @@ class LinearMatcher
       expect(@objs[@idx...]).to start_with val
       @idx += val.length
     else
+      expect(peek).to be_a(TinyCSS::AST::StringToken)
+      expect(peek.value).to eq val
+      consume
+    end
+  end
+
+  def ident(val)
+    if @objs.is_a? String
+      expect(@objs[@idx...]).to start_with val
+      @idx += val.length
+    else
+      expect(peek).to be_a(String)
       expect(peek).to eq val
       consume
     end
   end
 
-  def ident(val) = string(val)
+  def delim(*) = ident(*)
 
   def block(brace, &)
     ASTMatcher.new([peek]).block(brace, &)

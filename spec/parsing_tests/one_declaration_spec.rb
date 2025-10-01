@@ -252,8 +252,8 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
     match_ast(r) do
       decl("foo", important: false) do
         number 9000, :integer
-        string " "
-        string "!"
+        delim " "
+        delim "!"
         ident "İmportant"
       end
     end
@@ -270,10 +270,10 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
     match_ast(r) do
       decl("foo", important: false) do
         number 9000, :integer
-        string " "
-        string "!"
+        delim " "
+        delim "!"
         ident "important"
-        string "!"
+        delim "!"
       end
     end
   end
@@ -289,7 +289,7 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
     match_ast(r) do
       decl("foo", important: false) do
         number 9000, :integer
-        string " "
+        delim " "
         ident "important"
       end
     end
