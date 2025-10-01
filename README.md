@@ -134,6 +134,8 @@ You can introspect the original token stream to report accurate diagnostics.
 
 ## Development
 
+- Clone the repository, and run `git submodule update --init` to fetch the
+  required fixtures.
 - Install dependencies: `bundle install`
 - Run the test suite: `bundle exec rspec`
 - Check style and linting: `bundle exec rubocop`
