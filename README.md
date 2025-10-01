@@ -1,6 +1,6 @@
-# TinyCSS
+# MiniCSS
 
-TinyCSS is a pure Ruby implementation of the CSS Syntax Level 3 tokenizer,
+MiniCSS is a pure Ruby implementation of the CSS Syntax Level 3 tokenizer,
 parser, serializer, and selector toolkit. It provides fast, dependency-free
 primitives for building linters, minifiers, and other CSS-aware tooling
 without reaching for native extensions.
@@ -11,9 +11,9 @@ without reaching for native extensions.
 for Ruby 3.4+.
 - Battle-tested against the JSON-based `css-parsing-tests` suite for
 standards-compliant parsing.
-- High-level AST wrappers (`TinyCSS::AST::Rule`, `Decl`, `AtRule`, `Function`,
+- High-level AST wrappers (`MiniCSS::AST::Rule`, `Decl`, `AtRule`, `Function`,
 `Number`, and more) ready for programmatic inspection.
-- Bidirectional selector helpers (`TinyCSS::Sel`) for tokenizing, walking,
+- Bidirectional selector helpers (`MiniCSS::Sel`) for tokenizing, walking,
 computing specificity, and turning selector ASTs back into strings.
 - Serializer that converts AST nodes back into normalized CSS, enabling
 round-tripping and rewrites.
@@ -22,22 +22,22 @@ tokenization via `allow_unicode_ranges`.
 
 ## Installation
 
-Add TinyCSS to your project with Bundler:
+Add MiniCSS to your project with Bundler:
 
 ```bash
-bundle add tinycss
+bundle add minicss
 ```
 
 Or install it directly:
 
 ```bash
-gem install tinycss
+gem install minicss
 ```
 
 ## Quick Start
 
 ```ruby
-require "tinycss"
+require "minicss"
 
 css = <<~CSS
   @media (min-width: 768px) {
@@ -48,22 +48,22 @@ css = <<~CSS
   }
 CSS
 
-sheet = TinyCSS.parse(css)
+sheet = MiniCSS.parse(css)
 
 sheet.each do |node|
   case node
-  when TinyCSS::AST::AtRule
-    puts "At-rule: @#{node.name} #{TinyCSS.serialize(node.prelude)}"
-    node.child_rules.each { puts "  Child: #{TinyCSS.serialize(_1)}" }
-  when TinyCSS::AST::Rule
-    selector = TinyCSS::Sel.stringify(node.selector)
+  when MiniCSS::AST::AtRule
+    puts "At-rule: @#{node.name} #{MiniCSS.serialize(node.prelude)}"
+    node.child_rules.each { puts "  Child: #{MiniCSS.serialize(_1)}" }
+  when MiniCSS::AST::Rule
+    selector = MiniCSS::Sel.stringify(node.selector)
     puts "Rule: #{selector}"
     node.decls.each do |decl|
-      value = TinyCSS.serialize(decl.value)
+      value = MiniCSS.serialize(decl.value)
       important = decl.important? ? " !important" : ""
       puts "  #{decl.name}: #{value}#{important}"
     end
-  when TinyCSS::AST::SyntaxError
+  when MiniCSS::AST::SyntaxError
     warn "Syntax error: #{node.reason}"
   end
 end
@@ -72,13 +72,13 @@ end
 ## Tokenizing CSS
 
 ```ruby
-tokens = TinyCSS.tokenize(".btn { color: #fff; }")
+tokens = MiniCSS.tokenize(".btn { color: #fff; }")
 tokens.map { |token| [token.kind, token.literal] }
 # => [[:delim, "."], [:ident, "btn"], [:whitespace, " "], [:left_curly, "{"],
 #     [:whitespace, " "], [:ident, "color"], [:colon, ":"], [:whitespace, " "],
 #     [:hash, "#fff"], [:semicolon, ";"], [:whitespace, " "], [:right_curly, "}"]]
 
-unicode_tokens = TinyCSS.tokenize("div { content: U+4E00-9FFF; }", allow_unicode_ranges: true)
+unicode_tokens = MiniCSS.tokenize("div { content: U+4E00-9FFF; }", allow_unicode_ranges: true)
 ```
 
 Every token carries positional information via `token.pos_start` and
@@ -87,11 +87,11 @@ Every token carries positional information via `token.pos_start` and
 ## Working with Selectors
 
 ```ruby
-selector_ast = TinyCSS::Sel.parse("button#primary.action:hover")
-TinyCSS::Sel.specificity(selector_ast)
+selector_ast = MiniCSS::Sel.parse("button#primary.action:hover")
+MiniCSS::Sel.specificity(selector_ast)
 # => [1, 2, 1]
 
-TinyCSS::Sel.walk(selector_ast) do |token, parent|
+MiniCSS::Sel.walk(selector_ast) do |token, parent|
   puts "#{token[:type]} → #{token[:content]}"
 end
 # id → #primary
@@ -99,21 +99,21 @@ end
 # pseudo-class → :hover
 # type → button
 
-TinyCSS::Sel.stringify(selector_ast)
+MiniCSS::Sel.stringify(selector_ast)
 # => "button#primary.action:hover"
 ```
 
 Selectors are represented as nested hashes and arrays, mirroring the structure
-produced by Lea Verou’s parsel, which `TinyCSS::Sel` is based on.
+produced by Lea Verou’s parsel, which `MiniCSS::Sel` is based on.
 
 ## Serializing CSS
 
-`TinyCSS.serialize` accepts any AST node (or array of nodes) returned by
-`TinyCSS.parse`:
+`MiniCSS.serialize` accepts any AST node (or array of nodes) returned by
+`MiniCSS.parse`:
 
 ```ruby
-ast = TinyCSS.parse(".card { margin: 1rem; padding: 1rem; }")
-TinyCSS.serialize(ast)
+ast = MiniCSS.parse(".card { margin: 1rem; padding: 1rem; }")
+MiniCSS.serialize(ast)
 # => ".card{margin:1rem;padding:1rem;}"
 ```
 
@@ -121,11 +121,11 @@ This makes it easy to transform stylesheets and emit normalized output.
 
 ## Handling Errors
 
-When the parser encounters invalid input it emits `TinyCSS::AST::SyntaxError`
+When the parser encounters invalid input it emits `MiniCSS::AST::SyntaxError`
 nodes alongside the rest of the AST:
 
 ```ruby
-errors = TinyCSS.parse("p { color: }").grep(TinyCSS::AST::SyntaxError)
+errors = MiniCSS.parse("p { color: }").grep(MiniCSS::AST::SyntaxError)
 errors.each { warn _1.reason }
 # Syntax error details, including source offsets, are preserved from the tokenizer.
 ```
@@ -141,7 +141,7 @@ You can introspect the original token stream to report accurate diagnostics.
 
 Helpful utilities:
 
-- `bin/console` starts an IRB session with TinyCSS preloaded.
+- `bin/console` starts an IRB session with MiniCSS preloaded.
 - `bin/gen-specs.rb` regenerates the specs under `spec/parsing_tests` from the
 external `css-parsing-tests` fixtures.
 

@@ -29,7 +29,7 @@ class BodyMatcher
   def delim(*) = ident(*)
 
   def string(val)
-    expect(peek).to be_a(TinyCSS::AST::StringToken)
+    expect(peek).to be_a(MiniCSS::AST::StringToken)
     expect(peek.value).to eq val
     consume
   end
@@ -39,7 +39,7 @@ class BodyMatcher
     when String
       expect(peek).to eq raw
       consume
-    when TinyCSS::AST::Number
+    when MiniCSS::AST::Number
       expect(peek.type).to eq type
       expect(peek.value).to eq raw
       consume

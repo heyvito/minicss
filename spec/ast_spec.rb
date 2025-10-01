@@ -1,23 +1,23 @@
 # frozen_string_literal: true
 
-RSpec.describe TinyCSS::AST do
+RSpec.describe MiniCSS::AST do
   it "transforms a parsed CSS into AST" do
     style = <<~CSS
       body { background-color: #AABBCC; }
     CSS
-    tok = TinyCSS::CSS::Tokenizer.new(style)
+    tok = MiniCSS::CSS::Tokenizer.new(style)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = par.parse_stylesheet
-    TinyCSS::AST.convert(sheet)
+    MiniCSS::AST.convert(sheet)
   end
 
   it "transforms real CSS into AST" do
-    tok = TinyCSS::CSS::Tokenizer.new(File.read(fixture_path("vito_io.css")))
+    tok = MiniCSS::CSS::Tokenizer.new(File.read(fixture_path("vito_io.css")))
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = par.parse_stylesheet
-    TinyCSS::AST.convert(sheet)
+    MiniCSS::AST.convert(sheet)
   end
 
   it "parses an at-rule" do
@@ -29,10 +29,10 @@ RSpec.describe TinyCSS::AST do
       }
     CSS
 
-    tok = TinyCSS::CSS::Tokenizer.new(style)
+    tok = MiniCSS::CSS::Tokenizer.new(style)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     rule = par.consume_at_rule
-    TinyCSS::AST.convert(rule)
+    MiniCSS::AST.convert(rule)
   end
 end

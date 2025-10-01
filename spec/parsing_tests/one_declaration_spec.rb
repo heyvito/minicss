@@ -6,11 +6,11 @@
 RSpec.describe "css-parsing-tests: one_declaration.json" do
   it "parses \"\"" do
     style = ""
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("empty")
@@ -19,11 +19,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"  /**/\\n\"" do
     style = "  /**/\n"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("empty")
@@ -32,11 +32,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \" ;\"" do
     style = " ;"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -45,11 +45,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo\"" do
     style = "foo"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -58,11 +58,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"@foo:\"" do
     style = "@foo:"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -71,11 +71,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"#foo:\"" do
     style = "#foo:"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -84,11 +84,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \".foo:\"" do
     style = ".foo:"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -97,11 +97,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo*:\"" do
     style = "foo*:"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -110,11 +110,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo.. 9000\"" do
     style = "foo.. 9000"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("invalid")
@@ -123,11 +123,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo:\"" do
     style = "foo:"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -138,11 +138,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo :\"" do
     style = "foo :"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -153,11 +153,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"\\n/**/ foo: \"" do
     style = "\n/**/ foo: "
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -168,11 +168,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo:;\"" do
     style = "foo:;"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -183,11 +183,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \" /**/ foo /**/ :\"" do
     style = " /**/ foo /**/ :"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -198,11 +198,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo:;bar:;\"" do
     style = "foo:;bar:;"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -213,11 +213,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo: 9000  !Important\"" do
     style = "foo: 9000  !Important"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: true) do
@@ -228,11 +228,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo: 9000  ! /**/\\t IMPORTant /**/\\f\"" do
     style = "foo: 9000  ! /**/\t IMPORTant /**/\f"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: true) do
@@ -243,11 +243,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo: 9000  /* Dotted capital I */!\\u0130mportant\"" do
     style = "foo: 9000  /* Dotted capital I */!\u0130mportant"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -261,11 +261,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo: 9000  !important!\"" do
     style = "foo: 9000  !important!"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -280,11 +280,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo: 9000  important\"" do
     style = "foo: 9000  important"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do
@@ -297,11 +297,11 @@ RSpec.describe "css-parsing-tests: one_declaration.json" do
 
   it "parses \"foo:important\"" do
     style = "foo:important"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_declaration]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       decl("foo", important: false) do

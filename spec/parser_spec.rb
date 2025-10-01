@@ -1,21 +1,21 @@
 # frozen_string_literal: true
 
-RSpec.describe TinyCSS::CSS::Parser do
+RSpec.describe MiniCSS::CSS::Parser do
   it "parses a small CSS snippet" do
     style = <<~CSS
       body { background-color: #AABBCC; }
     CSS
 
-    tok = TinyCSS::CSS::Tokenizer.new(style)
+    tok = MiniCSS::CSS::Tokenizer.new(style)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     par.parse_stylesheet
   end
 
   it "reads a real CSS file" do
-    tok = TinyCSS::CSS::Tokenizer.new(File.read(fixture_path("vito_io.css")))
+    tok = MiniCSS::CSS::Tokenizer.new(File.read(fixture_path("vito_io.css")))
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     par.parse_stylesheet
   end
 
@@ -28,9 +28,9 @@ RSpec.describe TinyCSS::CSS::Parser do
       }
     CSS
 
-    tok = TinyCSS::CSS::Tokenizer.new(style)
+    tok = MiniCSS::CSS::Tokenizer.new(style)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     par.consume_at_rule
   end
 end

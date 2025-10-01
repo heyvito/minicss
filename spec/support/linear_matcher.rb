@@ -16,7 +16,7 @@ class LinearMatcher
       expect(@objs[@idx...]).to start_with val
       @idx += val.length
     else
-      expect(peek).to be_a(TinyCSS::AST::StringToken)
+      expect(peek).to be_a(MiniCSS::AST::StringToken)
       expect(peek.value).to eq val
       consume
     end

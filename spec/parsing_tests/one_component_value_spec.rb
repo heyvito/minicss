@@ -6,11 +6,11 @@
 RSpec.describe "css-parsing-tests: one_component_value.json" do
   it "parses \"\"" do
     style = ""
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("empty")
@@ -19,11 +19,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \" \"" do
     style = " "
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("empty")
@@ -32,11 +32,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \"/**/\"" do
     style = "/**/"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("empty")
@@ -45,11 +45,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \"  /**/\\t/* a */\\n\\n\"" do
     style = "  /**/\t/* a */\n\n"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("empty")
@@ -58,11 +58,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \".\"" do
     style = "."
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       delim "."
@@ -71,11 +71,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \"a\"" do
     style = "a"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       ident "a"
@@ -84,11 +84,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \"/**/ 4px\"" do
     style = "/**/ 4px"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       dimension(4, :integer, "px")
@@ -97,11 +97,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \"rgba(100%, 0%, 50%, .5)\"" do
     style = "rgba(100%, 0%, 50%, .5)"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       function("rgba") do
@@ -121,11 +121,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \" /**/ { foo: bar; @baz [)\"" do
     style = " /**/ { foo: bar; @baz [)"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       block("{") do
@@ -147,11 +147,11 @@ RSpec.describe "css-parsing-tests: one_component_value.json" do
 
   it "parses \".foo\"" do
     style = ".foo"
-    tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
+    tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)
     tok.tokenize
-    par = TinyCSS::CSS::Parser.new(tok.tokens)
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
     sheet = [par.parse_component_value]
-    r = TinyCSS::AST.convert(sheet)
+    r = MiniCSS::AST.convert(sheet)
 
     match_ast(r) do
       consume_error("extra-input")

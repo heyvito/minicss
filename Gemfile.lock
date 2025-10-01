@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    tinycss (0.1.0)
+    minicss (0.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -81,10 +81,10 @@ PLATFORMS
 DEPENDENCIES
   debug (~> 1.11)
   irb
+  minicss!
   rake (~> 13.0)
   rspec (~> 3.0)
   rubocop (~> 1.21)
-  tinycss!
 
 BUNDLED WITH
    2.6.9

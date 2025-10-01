@@ -52,9 +52,9 @@ class App
         write "it #{name.dump} do"
         inc do
           write "style = #{input.dump}"
-          write "tok = TinyCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)"
+          write "tok = MiniCSS::CSS::Tokenizer.new(style, allow_unicode_ranges: true)"
           write "tok.tokenize"
-          write "par = TinyCSS::CSS::Parser.new(tok.tokens)"
+          write "par = MiniCSS::CSS::Parser.new(tok.tokens)"
           case @opts.fetch(:type)
           when :blocks, :declarations
             write "sheet = par.parse_block_contents"
@@ -71,7 +71,7 @@ class App
           when :stylesheet
             write "sheet = par.parse_stylesheet"
           end
-          write "r = TinyCSS::AST.convert(sheet)"
+          write "r = MiniCSS::AST.convert(sheet)"
           write ""
           write "match_ast(r) do"
           inc do

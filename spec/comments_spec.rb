@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe TinyCSS do
+RSpec.describe MiniCSS do
   it "handles comments" do
     style = <<~CSS
       .highlight .c {
@@ -13,9 +13,9 @@ RSpec.describe TinyCSS do
       } /* Error */
     CSS
 
-    tokenizer = TinyCSS::CSS::Tokenizer.new(style)
+    tokenizer = MiniCSS::CSS::Tokenizer.new(style)
     tokenizer.tokenize
-    parser = TinyCSS::CSS::Parser.new(tokenizer.tokens)
+    parser = MiniCSS::CSS::Parser.new(tokenizer.tokens)
     parser.parse_stylesheet
   end
 end

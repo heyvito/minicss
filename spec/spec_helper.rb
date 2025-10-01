@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-require "tinycss"
+require "minicss"
 require "debug"
 require "json"
 

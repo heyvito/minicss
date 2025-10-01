@@ -15,7 +15,7 @@ class BlockPreludeMatcher
   def match = instance_exec(&@block)
 
   def prelude(&)
-    if @node.is_a? TinyCSS::AST::Rule
+    if @node.is_a? MiniCSS::AST::Rule
       LinearMatcher.new(@node.raw_selector).instance_exec(&)
     else
       LinearMatcher.new(@node.prelude).instance_exec(&)

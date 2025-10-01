@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-RSpec.describe TinyCSS::CSS::Tokenizer do
+RSpec.describe MiniCSS::CSS::Tokenizer do
   it "reads a real CSS file" do
     tok = described_class.new(File.read(fixture_path("vito_io.css")))
     tok.tokenize
   end
 
   it "correctly reads a url token" do
-    tok = TinyCSS::CSS::Tokenizer.new("url(https://vito.io)")
+    tok = MiniCSS::CSS::Tokenizer.new("url(https://vito.io)")
     tok.tokenize
     expect(tok.tokens.length).to eq 1
     t = tok.tokens.first

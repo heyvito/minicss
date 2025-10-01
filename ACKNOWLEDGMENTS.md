@@ -1,10 +1,10 @@
 # Acknowledgments
 
-TinyCSS makes use of the following open source projects:
+MiniCSS makes use of the following open source projects:
 
 ## @LeaVerou/parsel
 
-`TinyCSS::Sel` is heavily based on Lea Verou's [`parsel`](https://github.com/leaverou/parsel) project:
+`MiniCSS::Sel` is heavily based on Lea Verou's [`parsel`](https://github.com/leaverou/parsel) project:
 
 ```
 MIT License
