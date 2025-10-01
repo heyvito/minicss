@@ -21,11 +21,11 @@ module MiniCSS
     }.freeze
 
     ARGUMENT_PATTERNS = {
-      :pseudo_element => Regexp.new(
+      pseudo_element: Regexp.new(
         TOKENS[:pseudo_element].source.sub("(?<argument>¶*)", "(?<argument>.*)"),
         TOKENS[:pseudo_element].options
       ),
-      :pseudo_class => Regexp.new(
+      pseudo_class: Regexp.new(
         TOKENS[:pseudo_class].source.sub("(?<argument>¶*)", "(?<argument>.*)"),
         TOKENS[:pseudo_class].options
       )

@@ -65,3 +65,6 @@ Naming/PredicateMethod:
 Lint/HashCompareByIdentity:
   Exclude:
     - lib/minicss/sel.rb
+
+Layout/FirstHashElementIndentation:
+  EnforcedStyle: consistent
