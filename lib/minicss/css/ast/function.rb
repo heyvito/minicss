@@ -13,7 +13,7 @@ module MiniCSS
 
         def kind = :function
 
-        def literal = [name.literal, value.map(&:literal)].join
+        def literal = [name.literal, value.map(&:literal), ")"].join
       end
     end
   end

@@ -66,4 +66,20 @@ RSpec.describe MiniCSS::AST do
       }
     })
   end
+
+  it "parses nested rule with :is()" do
+    style = <<~CSS
+      .card {
+        :is(.title, .header) {
+          font-weight: bold;
+        }
+      }
+    CSS
+    tok = MiniCSS::CSS::Tokenizer.new(style)
+    tok.tokenize
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
+    rule = par.parse_rule
+    conv = MiniCSS::AST.convert(rule)
+    expect(conv.child_rules.first.raw_selector).to eq ":is(.title, .header) "
+  end
 end

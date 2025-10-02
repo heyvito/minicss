@@ -58,9 +58,11 @@ module MiniCSS
       when AST::URL
         "url(#{value.value})"
       when AST::Function
-        [value.name, "(",
-         value.value.map { serialize(it) },
-         ")"].join
+        [
+          value.name, "(",
+          value.value.map { serialize(it) },
+          ")"
+        ].join
       when AST::Block
         [
           value.left_token,
