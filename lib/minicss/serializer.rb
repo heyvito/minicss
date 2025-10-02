@@ -24,6 +24,18 @@ module MiniCSS
           value.important? ? "!important" : nil,
           ";"
         ].flatten.compact.join
+      when AST::Dimension
+        [
+          value.sign,
+          (value.type == :integer ? value.value.to_i : value.value.to_f).to_s,
+          value.unit
+        ].compact.join
+      when AST::Percentage
+        [
+          value.sign,
+          (value.type == :integer ? value.value.to_i : value.value.to_f).to_s,
+          "%"
+        ].compact.join
       when AST::Number
         [
           value.sign,
