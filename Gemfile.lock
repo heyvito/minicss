@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    minicss (0.1.1)
+    minicss (0.1.2)
 
 GEM
   remote: https://rubygems.org/
