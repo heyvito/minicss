@@ -423,4 +423,27 @@ RSpec.describe MiniCSS::Sel do
       ]
     })
   end
+
+  it "parses [data-role=\"primary\"] .label" do
+    input = "[data-role=\"primary\"] .label"
+    r = described_class.parse(input)
+    expect(r).to eq({
+      type: :complex,
+      combinator: " ",
+      left: {
+        name: "data-role",
+        operator: "=",
+        value: "\"primary\"",
+        type: :attribute,
+        content: "[data-role=\"primary\"]",
+        pos: [0, 21]
+      },
+      right: {
+        name: "label",
+        type: :class,
+        content: ".label",
+        pos: [22, 28]
+      }
+    })
+  end
 end

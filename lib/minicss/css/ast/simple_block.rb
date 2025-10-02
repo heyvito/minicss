@@ -29,7 +29,19 @@ module MiniCSS
         def left_token = LEFT_TOKENS[associated_token]
 
         def literal
-          [left_token, @value.map(&:literal), right_token].join
+          [left_token, @value.map { convert_value(it) }.join, right_token].join
+        end
+
+        def convert_value(val)
+          case val.kind
+          when :ident, :delim
+            val.literal
+          when :string
+            q = val.opts[:quoting]
+            [q, val.literal, q].join
+          else
+            raise "Unexpected type in value: #{val.kind}"
+          end
         end
       end
     end

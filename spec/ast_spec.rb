@@ -35,4 +35,35 @@ RSpec.describe MiniCSS::AST do
     rule = par.consume_at_rule
     MiniCSS::AST.convert(rule)
   end
+
+  it "parses selectors containing double-quotes" do
+    style = <<~CSS
+      [data-role="primary"] .label {
+        font-weight: bold;
+      }
+    CSS
+    tok = MiniCSS::CSS::Tokenizer.new(style)
+    tok.tokenize
+    par = MiniCSS::CSS::Parser.new(tok.tokens)
+    rule = par.parse_rule
+    conv = MiniCSS::AST.convert(rule)
+    expect(conv.selector).to eq({
+      type: :complex,
+      combinator: " ",
+      left: {
+        name: "data-role",
+        operator: "=",
+        value: "\"primary\"",
+        type: :attribute,
+        content: "[data-role=\"primary\"]",
+        pos: [0, 21]
+      },
+      right: {
+        name: "label",
+        type: :class,
+        content: ".label",
+        pos: [22, 28]
+      }
+    })
+  end
 end
