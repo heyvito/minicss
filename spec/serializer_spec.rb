@@ -26,4 +26,19 @@ RSpec.describe MiniCSS::Serializer do
     dump = MiniCSS.serialize(ast)
     expect(dump).to eq "div{content:\" \";}"
   end
+
+  it "deserializes and reserializes @-rules" do
+    style = <<~CSS
+      @font-face {
+        font-family: "MyFont";
+        src: url("font.woff2");
+      }
+
+      @import "normalize.css";
+    CSS
+
+    ast = MiniCSS.parse(style)
+    dump = MiniCSS.serialize(ast)
+    expect(dump).to eq "@font-face{font-family:\"MyFont\";src:url(\"font.woff2\");}@import \"normalize.css\";"
+  end
 end

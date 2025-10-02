@@ -30,13 +30,19 @@ module MiniCSS
           (value.type == :integer ? value.value.to_i : value.value.to_f).to_s
         ].compact.join
       when AST::AtRule
-        [
+        val = [
           "@",
           value.name,
-          value.prelude && !value.prelude.nil? && !value.prelude.empty? ? " #{value.prelude.map { serialize(it) }.flatten.compact.join}" : nil,
-          "{",
-          value.child_rules.map { serialize(it) }
-        ].flatten.compact.join
+          value.prelude && !value.prelude.nil? && !value.prelude.empty? ? " #{value.prelude.map { serialize(it) }.flatten.compact.join}" : nil
+        ]
+        if value.child_rules.empty?
+          val << ";"
+        else
+          val.append("{")
+          val.append(*value.child_rules.map { serialize(it) })
+          val.append("}")
+        end
+        val.flatten.compact.join
       when AST::URL
         "url(#{value.value})"
       when AST::Function
