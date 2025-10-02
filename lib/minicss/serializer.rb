@@ -12,7 +12,7 @@ module MiniCSS
         value
       when AST::Rule
         [
-          Sel.stringify(value.selector), "{",
+          value.valid_selector? ? Sel.stringify(value.selector) : value.raw_selector, "{",
           value.decls.map { serialize(it) },
           value.child_rules.map { serialize(it) },
           "}"

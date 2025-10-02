@@ -48,4 +48,11 @@ RSpec.describe MiniCSS::Serializer do
     dump = MiniCSS.serialize(ast)
     expect(dump).to eq "@media (max-width: 600px){div{color:blue;}}"
   end
+
+  it "deserializes and reserializes nested rules" do
+    style = ".base { & .value { color: blue; } }"
+    ast = MiniCSS.parse(style)
+    dump = MiniCSS.serialize(ast)
+    expect(dump).to eq ".base{& .value {color:blue;}}"
+  end
 end
