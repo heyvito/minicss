@@ -129,7 +129,7 @@ class ASTMatcher
 
     case peek
     when MiniCSS::AST::BadToken
-      expect(peek.kind).to eq kind.gsub("-", "_").to_sym
+      expect(peek.kind).to eq kind.tr("-", "_").to_sym
     when MiniCSS::AST::SyntaxError
       expect(peek.reason).to eq kind
     end

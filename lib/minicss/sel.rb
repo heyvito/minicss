@@ -251,21 +251,21 @@ module MiniCSS
       end
     end
 
-    def flatten(node, parent = nil, &block)
+    def flatten(node, parent = nil, &)
       return enum_for(:flatten, node, parent) unless block_given?
 
       case node[:type]
       when :list
-        node[:list].each { |child| flatten(child, node, &block) }
+        node[:list].each { |child| flatten(child, node, &) }
       when :complex
-        flatten(node[:left], node, &block)
-        flatten(node[:right], node, &block)
+        flatten(node[:left], node, &)
+        flatten(node[:right], node, &)
       when :relative
-        flatten(node[:right], node, &block)
+        flatten(node[:right], node, &)
       when :compound
-        node[:list].each { |token| block.call(token, node) }
+        node[:list].each { |token| yield(token, node) }
       else
-        block.call(node, parent)
+        yield(node, parent)
       end
     end
 

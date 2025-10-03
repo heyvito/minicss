@@ -13,3 +13,5 @@ gem "rspec", "~> 3.0"
 gem "rubocop", "~> 1.21"
 
 gem "debug", "~> 1.11"
+
+gem "rubocop-performance", "~> 1.26", require: false

@@ -42,8 +42,8 @@ module MiniCSS
         @input = (input.is_a?(IO) ? input.read : input.to_s)
                  .encode("UTF-8", invalid: :replace, undef: :replace, replace: "\uFFFD")
                  .gsub("\r\n", "\n")
-                 .gsub("\u000C", "\n")
-                 .gsub("\u0000", "\uFFFD")
+                 .tr("\u000C", "\n")
+                 .tr("\u0000", "\uFFFD")
                  .chars
         @len = @input.length
         @unicode_ranges_allowed = allow_unicode_ranges
