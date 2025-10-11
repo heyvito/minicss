@@ -10,3 +10,8 @@
 # rspec failure tracking
 .rspec_status
 *.gem
+
+cmake-build-debug/
+CMakeLists.txt
+*.so
+*.bundle
