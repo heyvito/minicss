@@ -9,30 +9,28 @@ module MiniCSS
         @tokens = tokens
         @idx = 0
         @marks = []
+        @peek = tokens[0] || Token::EOF
+        @peek1 = tokens[1] || Token::EOF
       end
 
-      def peek
-        token = @tokens[@idx]
-        return Token::EOF unless token
-
-        token
-      end
-
-      def peek1
-        token = @tokens[@idx + 1]
-        return Token::EOF unless token
-
-        token
-      end
+      attr_reader :peek, :peek1
 
       def empty? = peek.eof?
 
       def consume
-        peek.tap { @idx += 1 }
+        v = @peek
+        @idx += 1
+        @peek = @peek1
+        @peek1 = @tokens[@idx + 1] || Token::EOF
+        v
       end
 
       def discard
-        @idx += 1 unless empty?
+        unless empty?
+          @idx += 1
+          @peek = @peek1
+          @peek1 = @tokens[@idx + 1] || Token::EOF
+        end
         nil
       end
 
@@ -42,6 +40,8 @@ module MiniCSS
 
       def restore
         @idx = pop
+        @peek = @tokens[@idx] || Token::EOF
+        @peek1 = @tokens[@idx + 1] || Token::EOF
       end
 
       def pop

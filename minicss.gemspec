@@ -29,4 +29,6 @@ Gem::Specification.new do |spec|
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
+  spec.extensions    = ["ext/minicss_scanner/extconf.rb"]
+  spec.platform      = Gem::Platform::RUBY
 end

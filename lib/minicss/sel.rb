@@ -338,6 +338,8 @@ module MiniCSS
         specificity[2]
     end
 
+    NTH_CHILD_ITEMS = %w[nth-child nth-last-child].freeze
+
     def specificity(selector)
       ast = selector
       ast = parse(selector, recursive: true) if selector.is_a?(String)
@@ -372,7 +374,7 @@ module MiniCSS
           end
           sub = specificity(token[:subtree])
           sub.each_with_index { |value, index| ret[index] += value }
-          ret[1] += 1 if %w[nth-child nth-last-child].include?(token[:name])
+          ret[1] += 1 if NTH_CHILD_ITEMS.include?(token[:name])
         end
       end
 

@@ -246,6 +246,7 @@ files.each do |file, opts|
   app = App.new(file, data, opts)
   app.run!
   val = app.value.split("\n").map(&:rstrip).join("\n")
+  # rubocop:disable Performance/CollectionLiteralInLoop
   val = [
     "# frozen_string_literal: true",
     "",
@@ -254,6 +255,7 @@ files.each do |file, opts|
     "",
     ""
   ].join("\n").concat(val)
+  # rubocop:enable Performance/CollectionLiteralInLoop
   v, * = file.split(".")
   File.write(File.join("spec", "parsing_tests", "#{v}_spec.rb"), val)
 end

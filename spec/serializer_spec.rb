@@ -46,6 +46,7 @@ RSpec.describe MiniCSS::Serializer do
     style = "@media (max-width: 600px) { div { color: blue; } }"
     ast = MiniCSS.parse(style)
     dump = MiniCSS.serialize(ast)
+
     expect(dump).to eq "@media (max-width: 600px){div{color:blue;}}"
   end
 

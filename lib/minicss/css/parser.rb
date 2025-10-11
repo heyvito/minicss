@@ -123,7 +123,7 @@ module MiniCSS
               return rule
             end
 
-            rule.prelude << consume
+            rule.prelude << stream.consume
 
           when :left_curly
             consume_block.each { rule.child_rules << it }
@@ -146,7 +146,7 @@ module MiniCSS
           when :right_curly
             return nil if nested
 
-            rule.prelude << consume
+            rule.prelude << stream.consume
 
           when :left_curly
             non_ws = rule.prelude.reject { it.kind == :whitespace }
