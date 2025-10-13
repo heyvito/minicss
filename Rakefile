@@ -10,7 +10,7 @@ require "rubocop/rake_task"
 
 RuboCop::RakeTask.new
 
-task default: %i[spec rubocop]
+task default: %i[compile spec rubocop]
 
 namespace :bench do
   desc "Run stylesheet benchmarks"
