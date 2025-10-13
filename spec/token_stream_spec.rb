@@ -1,15 +1,17 @@
+# frozen_string_literal: true
+
 RSpec.describe MiniCSS::CSS::TokenStream do
   subject do
     described_class.new([
-      MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str0"),
-      MiniCSS::CSS::Token.new(:whitespace, nil, nil),
-      MiniCSS::CSS::Token.new(:whitespace, nil, nil),
-      MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str1"),
-      MiniCSS::CSS::Token.new(:whitespace, nil, nil),
-      MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str2"),
-      MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str3"),
-      MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str4")
-    ])
+                          MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str0"),
+                          MiniCSS::CSS::Token.new(:whitespace, nil, nil),
+                          MiniCSS::CSS::Token.new(:whitespace, nil, nil),
+                          MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str1"),
+                          MiniCSS::CSS::Token.new(:whitespace, nil, nil),
+                          MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str2"),
+                          MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str3"),
+                          MiniCSS::CSS::Token.new(:string, nil, nil, literal: "str4")
+                        ])
   end
 
   it "peeks an object" do

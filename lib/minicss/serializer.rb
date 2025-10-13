@@ -3,6 +3,7 @@
 module MiniCSS
   class Serializer
     def self.serialize(root) = new(root).css
+
     def initialize(root)
       @str = +""
       @root = root
