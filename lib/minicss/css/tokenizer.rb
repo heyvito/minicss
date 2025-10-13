@@ -12,7 +12,7 @@ module MiniCSS
               .tr("\u000C", "\n")
               .tr("\u0000", "\uFFFD")
         @source_str = str
-        @scanner = MiniCSS::CSS::Scanner.new(self, str, allow_unicode_ranges)
+        @scanner = MiniCSS::CSS::Scanner.new(str, allow_unicode_ranges)
       end
 
       def tokens = @scanner.tokens

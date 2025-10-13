@@ -409,7 +409,7 @@ static VALUE scanner_alloc(const VALUE klass) {
  *   - The lookahead mechanism allows token classification
  *     without repeatedly decoding UTF-8.
  */
-static VALUE scanner_initialize(const VALUE self, VALUE owner, VALUE str, VALUE allow_unicode_ranges) {
+static VALUE scanner_initialize(const VALUE self, VALUE str, VALUE allow_unicode_ranges) {
     Check_Type(str, T_STRING);
     scanner_t *sc;
     TypedData_Get_Struct(self, scanner_t, &scanner_type, sc);
@@ -422,7 +422,6 @@ static VALUE scanner_initialize(const VALUE self, VALUE owner, VALUE str, VALUE 
     sc->line = 1;
     sc->col = 1;
     sc->allow_unicode_ranges = RTEST(allow_unicode_ranges);
-    sc->owner = owner;
     sc->tokens = rb_ary_new();
 
     // prime lookahead
@@ -1429,7 +1428,7 @@ void Init_minicss_scanner(void) {
     INITIALIZE_REUSABLE_SYMBOL(right_curly);
 
     rb_define_alloc_func(cScanner, scanner_alloc);
-    rb_define_method(cScanner, "initialize", scanner_initialize, 3);
+    rb_define_method(cScanner, "initialize", scanner_initialize, 2);
 
     rb_define_method(cScanner, "eof?", scanner_at_eof, 0);
     rb_define_method(cScanner, "tokens", scanner_tokens, 0);

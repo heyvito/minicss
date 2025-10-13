@@ -5,8 +5,6 @@ module MiniCSS
     class Parser
       using StringRefinements
 
-      attr_reader :stream
-
       def initialize(tokens)
         @stream = TokenStream.new(tokens)
         @tokens = tokens
@@ -27,25 +25,25 @@ module MiniCSS
       end
 
       def parse_rule
-        stream.discard_whitespace
-        return SyntaxError.new("empty") if stream.empty?
+        @stream.discard_whitespace
+        return SyntaxError.new("empty") if @stream.empty?
 
-        result = if stream.peek.kind == :at_keyword
+        result = if @stream.peek.kind == :at_keyword
           consume_at_rule
         else
           consume_qualified_rule
         end
         return SyntaxError.new("invalid") unless result
 
-        stream.discard_whitespace
-        return SyntaxError.new("extra-input") unless stream.empty?
+        @stream.discard_whitespace
+        return SyntaxError.new("extra-input") unless @stream.empty?
 
         result
       end
 
       def parse_declaration
-        stream.discard_whitespace
-        return SyntaxError.new("empty") if stream.empty?
+        @stream.discard_whitespace
+        return SyntaxError.new("empty") if @stream.empty?
 
         decl = consume_declaration
         return SyntaxError.new("invalid") unless decl
@@ -54,25 +52,23 @@ module MiniCSS
       end
 
       def parse_component_value
-        stream.discard_whitespace
-        return SyntaxError.new("empty") if stream.empty?
+        @stream.discard_whitespace
+        return SyntaxError.new("empty") if @stream.empty?
 
         value = consume_component_value
-        stream.discard_whitespace
-        return SyntaxError.new("extra-input") unless stream.empty?
+        @stream.discard_whitespace
+        return SyntaxError.new("extra-input") unless @stream.empty?
 
         value
       end
 
-      def parse_component_value_list
-        consume_component_value_list
-      end
+      def parse_component_value_list = consume_component_value_list
 
       def parse_component_value_comma_list
         groups = []
-        until stream.empty?
+        until @stream.empty?
           groups << consume_component_value_list(stop: :comma)
-          stream.discard
+          @stream.discard
         end
         groups
       end
@@ -80,7 +76,7 @@ module MiniCSS
       # Helpers
 
       def assert_next_token(kind)
-        stream.peek.kind == kind
+        @stream.peek.kind == kind
       end
 
       # Parsers
@@ -88,9 +84,9 @@ module MiniCSS
       def consume_stylesheet_contents
         rules = []
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :whitespace, :cdo, :cdc
-            stream.discard
+            @stream.discard
 
           when :eof
             return rules
@@ -109,11 +105,11 @@ module MiniCSS
       def consume_at_rule(nested: false)
         return unless assert_next_token(:at_keyword)
 
-        rule = AST::AtRule.new(name: stream.consume)
+        rule = AST::AtRule.new(name: @stream.consume)
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :semicolon, :eof
-            stream.discard
+            @stream.discard
             # TODO: If rule is valid in the current context, return it; otherwise return nothing.
             return rule
 
@@ -123,10 +119,10 @@ module MiniCSS
               return rule
             end
 
-            rule.prelude << stream.consume
+            rule.prelude << @stream.consume
 
           when :left_curly
-            consume_block.each { rule.child_rules << it }
+            rule.child_rules.append(*consume_block)
             return rule
 
           else
@@ -139,14 +135,14 @@ module MiniCSS
         rule = AST::QualifiedRule.new
 
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :eof, stop
             return nil
 
           when :right_curly
             return nil if nested
 
-            rule.prelude << stream.consume
+            rule.prelude << @stream.consume
 
           when :left_curly
             non_ws = rule.prelude.reject { it.kind == :whitespace }
@@ -179,9 +175,9 @@ module MiniCSS
       def consume_block
         return unless assert_next_token(:left_curly)
 
-        stream.discard
+        @stream.discard
         rules = consume_block_contents
-        stream.discard
+        @stream.discard
         rules
       end
 
@@ -190,9 +186,9 @@ module MiniCSS
         decls = AST::DeclarationList.new
 
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :whitespace, :semicolon
-            stream.discard
+            @stream.discard
           when :eof, :right_curly
             rules << decls unless decls.empty?
             return rules
@@ -204,15 +200,15 @@ module MiniCSS
             at = consume_at_rule(nested: true)
             rules << at if at.is_a? AST::AtRule
           else
-            stream.mark
+            @stream.mark
             decl = consume_declaration(nested: true)
             if decl.is_a? AST::Declaration
               decls << decl
-              stream.pop
+              @stream.pop
               next
             end
 
-            stream.restore
+            @stream.restore
             rule = consume_qualified_rule(nested: true)
             if rule.is_a? InvalidRuleError
               unless decls.empty?
@@ -232,23 +228,23 @@ module MiniCSS
 
       def consume_declaration(nested: false)
         decl = AST::Declaration.new
-        if stream.peek.kind == :ident
-          decl.name = stream.consume
+        if @stream.peek.kind == :ident
+          decl.name = @stream.consume
         else
           consume_bad_declaration(nested:)
           return nil
         end
 
-        stream.discard_whitespace
+        @stream.discard_whitespace
 
-        if stream.peek.kind == :colon
-          stream.discard
+        if @stream.peek.kind == :colon
+          @stream.discard
         else
           consume_bad_declaration(nested:)
           return nil
         end
 
-        stream.discard_whitespace
+        @stream.discard_whitespace
 
         decl.value = consume_component_value_list(nested:, stop: :semicolon)
 
@@ -276,14 +272,14 @@ module MiniCSS
 
       def consume_bad_declaration(nested:)
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :eof, :semicolon
-            stream.discard
+            @stream.discard
             return nil
           when :right_curly
             return if nested
 
-            stream.discard
+            @stream.discard
           else
             consume_component_value
           end
@@ -293,14 +289,14 @@ module MiniCSS
       def consume_component_value_list(stop: nil, nested: false)
         values = []
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :eof, stop
             return values
 
           when :right_curly
             return values if nested
 
-            values << stream.consume
+            values << @stream.consume
 
           else
             values << consume_component_value
@@ -309,20 +305,20 @@ module MiniCSS
       end
 
       def consume_component_value
-        case stream.peek.kind
+        case @stream.peek_kind
         when :left_curly, :left_square_bracket, :left_parenthesis
           consume_simple_block
         when :function
           consume_function
         else
-          stream.consume
+          @stream.consume
         end
       end
 
       def consume_simple_block
         return if !assert_next_token(:left_curly) && !assert_next_token(:left_square_bracket) && !assert_next_token(:left_parenthesis)
 
-        block = AST::SimpleBlock.new(associated_token: stream.consume.kind)
+        block = AST::SimpleBlock.new(associated_token: @stream.consume.kind)
         ending_token = {
           left_curly: :right_curly,
           left_parenthesis: :right_parenthesis,
@@ -330,9 +326,9 @@ module MiniCSS
         }[block.associated_token]
 
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :eof, ending_token
-            stream.discard
+            @stream.discard
             return block
           else
             block.value << consume_component_value
@@ -343,12 +339,12 @@ module MiniCSS
       def consume_function
         return unless assert_next_token(:function)
 
-        func = AST::Function.new(name: stream.consume)
+        func = AST::Function.new(name: @stream.consume)
 
         loop do
-          case stream.peek.kind
+          case @stream.peek.kind
           when :eof, :right_parenthesis
-            stream.discard
+            @stream.discard
             return func
           else
             func.value << consume_component_value

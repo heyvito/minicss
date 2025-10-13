@@ -30,3 +30,7 @@ task bench: %w[bench:stylesheet bench:selectors]
 Rake::ExtensionTask.new("minicss_scanner") do |ext|
   ext.lib_dir = "lib"
 end
+
+Rake::ExtensionTask.new("minicss_token_stream") do |ext|
+  ext.lib_dir = "lib"
+end

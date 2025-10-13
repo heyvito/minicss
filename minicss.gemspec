@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.authors = ["Vito Sartori"]
   spec.email = ["hey@vito.io"]
 
-  spec.summary = "MiniCSS is a pure-Ruby CSS parsing library"
+  spec.summary = "MiniCSS is a CSS parsing library"
   spec.description = spec.summary
   spec.homepage = "https://github.com/heyvito/minicss"
   spec.license = "MIT"
@@ -29,6 +29,6 @@ Gem::Specification.new do |spec|
   spec.bindir = "exe"
   spec.executables = spec.files.grep(%r{\Aexe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
-  spec.extensions    = ["ext/minicss_scanner/extconf.rb"]
+  spec.extensions    = ["ext/minicss_scanner/extconf.rb", "ext/minicss_token_stream/extconf.rb"]
   spec.platform      = Gem::Platform::RUBY
 end

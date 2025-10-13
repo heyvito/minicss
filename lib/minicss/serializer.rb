@@ -1,79 +1,74 @@
 # frozen_string_literal: true
 
 module MiniCSS
-  module Serializer
-    module_function
+  class Serializer
+    def self.serialize(root) = new(root).css
+    def initialize(root)
+      @str = +""
+      @root = root
+    end
 
     def serialize(value)
       case value
       when Array
-        value.map { serialize(it) }.flatten.compact.join
+        value.each { serialize(it) }
       when String
-        value
+        @str << value
       when AST::Rule
-        [
-          value.valid_selector? ? Sel.stringify(value.selector) : value.raw_selector, "{",
-          value.decls.map { serialize(it) },
-          value.child_rules.map { serialize(it) },
-          "}"
-        ].flatten.compact.join
+        @str << (value.valid_selector? ? Sel.stringify(value.selector) : value.raw_selector) << "{"
+        value.decls.each { serialize(it) }
+        value.child_rules.each { serialize(it) }
+        @str << "}"
       when AST::Decl
-        [
-          "#{value.name}:",
-          value.value.map { serialize(it) },
-          value.important? ? "!important" : nil,
-          ";"
-        ].flatten.compact.join
+        @str << "#{value.name}:"
+        value.value.each { serialize(it) }
+        @str << (value.important? ? "!important" : "")
+        @str << ";"
       when AST::Dimension
-        [
-          value.sign,
-          (value.type == :integer ? value.value.to_i : value.value.to_f).to_s,
-          value.unit
-        ].compact.join
+        @str << value.sign if value.sign
+        @str << (value.type == :integer ? value.value.to_i : value.value.to_f).to_s
+        @str << value.unit
       when AST::Percentage
-        [
-          value.sign,
-          (value.type == :integer ? value.value.to_i : value.value.to_f).to_s,
-          "%"
-        ].compact.join
+        @str << value.sign if value.sign
+        @str << (value.type == :integer ? value.value.to_i : value.value.to_f).to_s
+        @str << "%"
       when AST::Number
-        [
-          value.sign,
-          (value.type == :integer ? value.value.to_i : value.value.to_f).to_s
-        ].compact.join
+        @str << value.sign if value.sign
+        @str << (value.type == :integer ? value.value.to_i : value.value.to_f).to_s
       when AST::AtRule
-        val = [
-          "@",
-          value.name,
-          value.prelude && !value.prelude.nil? && !value.prelude.empty? ? " #{value.prelude.map { serialize(it) }.flatten.compact.join}" : nil
-        ]
-        if value.child_rules.empty?
-          val << ";"
-        else
-          val.append("{")
-          val.append(*value.child_rules.map { serialize(it) })
-          val.append("}")
+        @str << "@" << value.name
+        if value.prelude && !value.prelude.nil? && !value.prelude.empty?
+          @str << " "
+          value.prelude.each { serialize(it) }
         end
-        val.flatten.compact.join
+
+        if value.child_rules.empty?
+          @str << ";"
+        else
+          @str << "{"
+          value.child_rules.each { serialize(it) }
+          @str << "}"
+        end
       when AST::URL
-        "url(#{value.value})"
+        @str << "url(" << value.value << ")"
       when AST::Function
-        [
-          value.name, "(",
-          value.value.map { serialize(it) },
-          ")"
-        ].join
+        @str << value.name << "("
+        value.value.each { serialize(it) }
+        @str << ")"
       when AST::Block
-        [
-          value.left_token,
-          value.value.map { serialize(it) },
-          value.right_token
-        ].flatten.compact.join
+        @str << value.left_token
+        value.value.each { serialize(it) }
+        @str << value.right_token
       when AST::StringToken
-        [value.quoting, value.value, value.quoting].flatten.compact.join
+        @str << value.quoting << (value.value || "") << value.quoting
       else
         raise "Unexpected element in serialization pipeline: #{value.class} #{value.inspect}"
       end
+    end
+
+    def css
+      serialize(@root)
+      @str
     end
   end
 end
